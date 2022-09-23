@@ -32,7 +32,7 @@
               <ul class="dropdown-menu">
                 <li class="ms-2">
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" v-model="item.standart2G">
+                    <input @click="select_st(item.id, '2g')" class="form-check-input" type="checkbox" id="flexCheckDefault" :checked="item.standart2G">
                     <label for="standart2G" class="form-check-label">
                       2G
                     </label>
@@ -40,7 +40,7 @@
                 </li>
                 <li class="ms-2">
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" v-model="item.standart3G">
+                    <input @click="select_st(item.id, '3g')" class="form-check-input" type="checkbox" id="flexCheckDefault" :checked="item.standart3G">
                     <label for="standart3G" class="form-check-label">
                       3G
                     </label>
@@ -48,7 +48,7 @@
                 </li>
                 <li class="ms-2">
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" v-model="item.standart4G">
+                    <input @click="select_st(item.id, '4g')" class="form-check-input" type="checkbox" id="flexCheckDefault" :checked="item.standart4G">
                     <label for="standart4G" class="form-check-label">
                       4G
                     </label>
@@ -79,6 +79,9 @@ export default {
     methods: {
       select: function (id) {
         this.$emit('selected', id)
+      },
+      select_st: function (id, st) {
+        this.$emit('selected_st', {'id': id, 'st': st})
       }
     }
     // created: {
