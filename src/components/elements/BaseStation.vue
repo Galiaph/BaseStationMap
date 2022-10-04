@@ -1,10 +1,9 @@
 <template>
   <ymap-marker
-      marker-id='data.marker_id'
-      :balloon="{header: 'data.balloon'}"
-      :icon="{color: 'getColor(data.operator_color)', content: 'data.content'}"
-      :coords="data.coords"
-      cluster-name="1">
+            marker-id="id"
+            :coords="geoLocation"
+            :balloon="{header: comment}"
+            :icon="{content: name, color: getColor(color)}">
     </ymap-marker>
 </template>
 
@@ -12,11 +11,30 @@
 export default {
   name: 'BaseStation',
   props: {
-    data: Object
+    id: Number,
+    geoLocation: Array,
+    comment: String,
+    name: String,
+    color: Number
+  },
+  methods: {
+    getColor: function (id) {
+      switch (id) {
+        case 1:
+          return 'green'
+        case 2:
+          return 'yellow'
+        case 3:
+          return 'blue'
+        case 4:
+          return 'red'
+        default:
+          return 'pink'
+      }
+    }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 </style>

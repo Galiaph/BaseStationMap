@@ -1,20 +1,16 @@
 <template>
     <yandex-map :coords="coords" :zoom="zoom">
-        <ymap-marker v-for="(item, index) in baseStations" :key="index" :data="item"
-            marker-id="item.id"
-            :coords="[item.bs_latitude, item.bs_longitude]"
-            cluster-name="1"
-            :balloon="{header: item.bs_comment}"
-            :icon="{content: item.bs_name, color: 'green'}">
-        </ymap-marker>
+        <baseStationsArr v-for="(item, index) of baseStations" :key="index" :id="item.id" :comment="item.bs_comment" :geoLocation="[item.bs_latitude, item.bs_longitude]" :name="item.bs_name" :color="item.bs_operator" />
     </yandex-map>
 </template>
 
 <script>
+import baseStationsArr from './elements/BaseStation.vue'
 export default {
     // eslint-disable-next-line
     name: 'Map',
     components: { 
+        baseStationsArr
     },
     props: {
       baseStations: Object,
@@ -24,11 +20,6 @@ export default {
         coords: [46.63, 32.62],
         zoom: 12
     })
-    // computed: {
-    //     comBaseStations () {
-    //         return this.baseStations.filter(element => element.show === true)
-    //     }
-    // }
 }
 </script>
 

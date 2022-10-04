@@ -31,28 +31,34 @@
               </a>
               <ul class="dropdown-menu">
                 <li class="ms-2">
-                  <div class="form-check">
-                    <input @click="select_st(item.id, '2g')" class="form-check-input" type="checkbox" id="flexCheckDefault" :checked="item.standart2G">
-                    <label for="standart2G" class="form-check-label">
-                      2G
-                    </label>
-                  </div>
+                  <a @click.prevent="select_st(item.id, '2g')" class="dropdown-item" href="#">2G
+                    <svg v-show="!item.standart2G" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left float-end mt-1" viewBox="0 0 16 16">
+                      <path d="M10 12.796V3.204L4.519 8 10 12.796zm-.659.753-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z"/>
+                    </svg>
+                    <svg v-show="item.standart2G" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill float-end mt-1" viewBox="0 0 16 16">
+                      <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+                    </svg>
+                  </a>
                 </li>
                 <li class="ms-2">
-                  <div class="form-check">
-                    <input @click="select_st(item.id, '3g')" class="form-check-input" type="checkbox" id="flexCheckDefault" :checked="item.standart3G">
-                    <label for="standart3G" class="form-check-label">
-                      3G
-                    </label>
-                  </div>
+                  <a @click.prevent="select_st(item.id, '3g')" class="dropdown-item" href="#">3G
+                    <svg v-show="!item.standart3G" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left float-end mt-1" viewBox="0 0 16 16">
+                      <path d="M10 12.796V3.204L4.519 8 10 12.796zm-.659.753-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z"/>
+                    </svg>
+                    <svg v-show="item.standart3G" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill float-end mt-1" viewBox="0 0 16 16">
+                      <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+                    </svg>
+                  </a>
                 </li>
                 <li class="ms-2">
-                  <div class="form-check">
-                    <input @click="select_st(item.id, '4g')" class="form-check-input" type="checkbox" id="flexCheckDefault" :checked="item.standart4G">
-                    <label for="standart4G" class="form-check-label">
-                      4G
-                    </label>
-                  </div>
+                  <a @click.prevent="select_st(item.id, '4g')" class="dropdown-item" href="#">4G
+                    <svg v-show="!item.standart4G" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left float-end mt-1" viewBox="0 0 16 16">
+                      <path d="M10 12.796V3.204L4.519 8 10 12.796zm-.659.753-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z"/>
+                    </svg>
+                    <svg v-show="item.standart4G" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill float-end mt-1" viewBox="0 0 16 16">
+                      <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+                    </svg>
+                  </a>
                 </li>
               </ul>
             </div>
