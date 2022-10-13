@@ -1,6 +1,8 @@
 <template>
   <Headers :operators="operatorGroup" @selected="select_oper($event)" @selected_st="select_st($event)" />
-  <Map :baseStations="baseStationsGroup" :operators="operatorGroup" key="index" />
+  <div class="cnt">
+    <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :coords="coord" />
+  </div>
 </template>
 
 <script>
@@ -16,10 +18,9 @@ export default {
   },
   data: () => ({
     baseStationsGroup: [],
-    //baseStationsGroup2: [],
     operatorGroup: [],
     appTitle: 'Base map',
-    index: 0
+    coord: [46.63, 32.62]
   }),
   methods: {
       select_oper: function (event) {
@@ -31,52 +32,79 @@ export default {
           this.delBaseStationById(this.operatorGroup[event].id)
         }
       },
-      select_st: function (event) {
+      select_st: async function (event) {
+        // const resp = await axios.get(`http://192.168.0.160:5000/bs/${this.operatorGroup[event.id-1].id}`)
         switch (event.st) {
           case '2g':
             this.operatorGroup[event.id-1].standart2G = this.operatorGroup[event.id-1].standart2G ? 0 : 1
-
-            this.baseStationsGroup = this.baseStationsGroup.filter(element => {
-              if ((element.bs_3g === 1 && this.operatorGroup[event.id-1].standart3G === 1) ||
-                  (element.bs_4g === 1 && this.operatorGroup[event.id-1].standart4G === 1)) {
-                return true
-              }
-
-              return false
+            this.baseStationsGroup.forEach(item => {
+              if ((item.bs_4g === 1 && this.operatorGroup[event.id-1].standart4G === 1) ||
+                  (item.bs_2g === 1 && this.operatorGroup[event.id-1].standart2G === 1) ||
+                  (item.bs_3g === 1 && this.operatorGroup[event.id-1].standart3G === 1)) {
+                item.show = true
+              } else
+                item.show = false
             })
+            console.log(this.baseStationsGroup)
+            // this.delBaseStationById(this.operatorGroup[event.id-1].id)
+            // this.baseStationsGroup = this.baseStationsGroup.concat(resp.data.filter(item => {
+            //   if ((item.bs_3g === 1 && this.operatorGroup[event.id-1].standart3G === 1) ||
+            //       (item.bs_4g === 1 && this.operatorGroup[event.id-1].standart4G === 1) ||
+            //       (item.bs_2g === 1 && this.operatorGroup[event.id-1].standart2G === 1)) {
+            //     return true
+            //   }
+
+            //   return false
+            // }))
             break
           case '3g':
             this.operatorGroup[event.id-1].standart3G = this.operatorGroup[event.id-1].standart3G ? 0 : 1
-
-            this.baseStationsGroup = this.baseStationsGroup.filter(element => {
-              if ((element.bs_4g === 1 && this.operatorGroup[event.id-1].standart4G === 1) ||
-                  (element.bs_2g === 1 && this.operatorGroup[event.id-1].standart2G === 1)) {
-                return true
-              }
-
-              return false
+            this.baseStationsGroup.forEach(item => {
+              if ((item.bs_4g === 1 && this.operatorGroup[event.id-1].standart4G === 1) ||
+                  (item.bs_2g === 1 && this.operatorGroup[event.id-1].standart2G === 1) ||
+                  (item.bs_3g === 1 && this.operatorGroup[event.id-1].standart3G === 1)) {
+                item.show = true
+              } else
+                item.show = false
             })
+            console.log(this.baseStationsGroup)
+            // this.delBaseStationById(this.operatorGroup[event.id-1].id)
+            // this.baseStationsGroup = this.baseStationsGroup.concat(resp.data.filter(item => {
+            //   if ((item.bs_4g === 1 && this.operatorGroup[event.id-1].standart4G === 1) ||
+            //       (item.bs_2g === 1 && this.operatorGroup[event.id-1].standart2G === 1) ||
+            //       (item.bs_3g === 1 && this.operatorGroup[event.id-1].standart3G === 1)) {
+            //     return true
+            //   }
+
+            //   return false
+            // }))
             break
           case '4g':
-            // console.log(this.operatorGroup[event.id-1])
             this.operatorGroup[event.id-1].standart4G = this.operatorGroup[event.id-1].standart4G ? 0 : 1
-
-            this.baseStationsGroup = this.baseStationsGroup.filter(element => {
-              if ((element.bs_3g === 1 && this.operatorGroup[event.id-1].standart3G === 1) ||
-                  (element.bs_2g === 1 && this.operatorGroup[event.id-1].standart2G === 1)) {
-                return true
-              }
-
-              return false
+            this.baseStationsGroup.forEach(item => {
+              if ((item.bs_3g === 1 && this.operatorGroup[event.id-1].standart3G === 1) ||
+                  (item.bs_2g === 1 && this.operatorGroup[event.id-1].standart2G === 1) ||
+                  (item.bs_4g === 1 && this.operatorGroup[event.id-1].standart4G === 1)) {
+                item.show = true
+              } else
+                item.show = false
             })
+            console.log(this.baseStationsGroup)
+            // this.delBaseStationById(this.operatorGroup[event.id-1].id)
+            // this.baseStationsGroup = this.baseStationsGroup.concat(resp.data.filter(item => {
+            //   if ((item.bs_3g === 1 && this.operatorGroup[event.id-1].standart3G === 1) ||
+            //       (item.bs_2g === 1 && this.operatorGroup[event.id-1].standart2G === 1) ||
+            //       (item.bs_4g === 1 && this.operatorGroup[event.id-1].standart4G === 1)) {
+            //     return true
+            //   }
 
-            // console.log(this.baseStationsGroup)
-
+            //   return false
+            // }))
             break
         }
       },
       getOperators: async function () {
-        const resp = await axios.get('http://192.168.0.160:5000/operators')
+        const resp = await axios.get('http://192.168.1.180:5000/operators')
         this.operatorGroup = resp.data
 
         this.operatorGroup.forEach(item => {
@@ -89,31 +117,20 @@ export default {
           item.standart2G = 1
           item.standart3G = 1
           item.standart4G = 1
+          item.show = true
         })
       },
       getBaseStationById: async function (id) {
-        const resp = await axios.get(`http://192.168.0.160:5000/bs/${id}`)
+        const resp = await axios.get(`http://192.168.1.180:5000/bs/${id}`)
         this.baseStationsGroup = this.baseStationsGroup.concat(resp.data.filter(item => this.baseStationsGroup['bs_name'] === item.bs_name ? false : true ))
       },
       getBaseStations: async function () {
-        const resp = await axios.get(`http://192.168.0.160:5000/bs/1`)
+        const resp = await axios.get(`http://192.168.1.180:5000/bs/1`)
         this.baseStationsGroup = resp.data
       },
-      delBaseStationById: function (id) {
+      delBaseStationById: async function (id) {
         this.baseStationsGroup = this.baseStationsGroup.filter(item => item.bs_operator != id)
       },
-      fillBaseStation: function (id) {
-        this.baseStationsGroup.forEach(element => {
-          if ((element.bs_4g === 1 && this.operatorGroup[id-1].standart4G === 1) /*||
-              (element.bs_3g === 1 && this.operatorGroup[id-1].standart3G === 1) ||
-              (element.bs_2g === 1 && this.operatorGroup[id-1].standart2G === 1)*/) {
-            element.show = true
-            return
-          }
-
-          element.show = false
-        })
-      }
     },
     // created: {
     // },
@@ -129,7 +146,17 @@ export default {
 </script>
 
 <style>
+#app {
+  width: 100%;
+}
+
+.cnt {
+  width: 100%;
+  height: 92%;
+  position: absolute;
+}
+
 .ymap-container {
-  height: 600px;
+  height: 100%;
 }
 </style>

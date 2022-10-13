@@ -1,6 +1,6 @@
 <template>
     <yandex-map :coords="coords" :zoom="zoom">
-        <baseStationsArr v-for="(item, index) of baseStations" :key="index" :id="item.id" :comment="item.bs_comment" :geoLocation="[item.bs_latitude, item.bs_longitude]" :name="item.bs_name" :color="item.bs_operator" />
+        <baseStationsArr v-for="(item, index) of baseStations" :show="item.show" :key="index" :id="item.id" :comment="item.bs_comment" :status="item.bs_status" :geoLocation="[item.bs_latitude, item.bs_longitude]" :name="item.bs_name" :color="item.bs_operator" />
     </yandex-map>
 </template>
 

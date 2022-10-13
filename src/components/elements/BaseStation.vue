@@ -1,9 +1,10 @@
 <template>
-  <ymap-marker
-            marker-id="id"
-            :coords="geoLocation"
-            :balloon="{header: comment}"
-            :icon="{content: name, color: getColor(color)}">
+  <ymap-marker v-if="!show"
+      marker-id="id"
+      cluster-name="color"
+      :coords="geoLocation"
+      :balloon="{header: comment}"
+      :icon="{content: name, color: getColor(color, status)}">
     </ymap-marker>
 </template>
 
@@ -15,21 +16,25 @@ export default {
     geoLocation: Array,
     comment: String,
     name: String,
-    color: Number
+    color: Number,
+    status: Number,
+    show: Boolean
   },
   methods: {
-    getColor: function (id) {
+    getColor: function (id, st) {
+      if (st == '0')
+          return 'red'
       switch (id) {
         case 1:
-          return 'green'
-        case 2:
-          return 'yellow'
-        case 3:
           return 'blue'
-        case 4:
-          return 'red'
-        default:
+        case 2:
           return 'pink'
+        case 3:
+          return 'yellow'
+        case 4:
+          return 'green'
+        default:
+          return 'grey'
       }
     }
   }

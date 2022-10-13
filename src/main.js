@@ -44,5 +44,5 @@ const errorInterceptor = async error => {
 
 // axios.interceptors.request.use(authInterceptor)
 axios.interceptors.response.use(undefined, errorInterceptor)
-
+//.use(ymapPlugin, settings)
 createApp(App).use(router).use(ymapPlugin, settings).mount('#app')
