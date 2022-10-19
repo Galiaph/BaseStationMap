@@ -64,8 +64,8 @@
             </div>
           </li>
         </ul>
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <form class="d-flex" role="search" @submit.prevent="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" v-model="searchText">
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
       </div>
@@ -78,6 +78,7 @@ export default {
   // eslint-disable-next-line
     name: 'Headers',
     data: () => ({
+      searchText: ''
     }),
     props: {
       operators: Object
@@ -88,6 +89,9 @@ export default {
       },
       select_st: function (id, st) {
         this.$emit('selected_st', {'id': id, 'st': st})
+      },
+      search: function () {
+        this.$emit('searchBase', this.searchText)
       }
     }
     // created: {

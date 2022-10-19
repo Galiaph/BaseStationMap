@@ -1,7 +1,7 @@
 <template>
-  <Headers :operators="operatorGroup" @selected="select_oper($event)" @selected_st="select_st($event)" />
+  <Headers :operators="operatorGroup" @selected="select_oper($event)" @selected_st="select_st($event)" @searchBase="search_base($event)" />
   <div class="cnt">
-    <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :coords="coord" />
+    <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :coords="coord" :zooms="zoom" />
   </div>
 </template>
 
@@ -20,9 +20,21 @@ export default {
     baseStationsGroup: [],
     operatorGroup: [],
     appTitle: 'Base map',
-    coord: [46.63, 32.62]
+    coord: [46.63, 32.62],
+    zoom: 12
   }),
   methods: {
+      chZoom: function (event) {
+        this.zoom = event
+      },
+      search_base: function (event) {
+        const val = this.baseStationsGroup.filter(item => item.bs_name == event)[0]
+
+        if (val) {
+          this.coord = [val.bs_latitude, val.bs_longitude]
+          this.zoom = 17
+        }
+      },
       select_oper: function (event) {
         this.operatorGroup[event].change = !this.operatorGroup[event].change
 
@@ -45,7 +57,6 @@ export default {
               } else
                 item.show = false
             })
-            console.log(this.baseStationsGroup)
             // this.delBaseStationById(this.operatorGroup[event.id-1].id)
             // this.baseStationsGroup = this.baseStationsGroup.concat(resp.data.filter(item => {
             //   if ((item.bs_3g === 1 && this.operatorGroup[event.id-1].standart3G === 1) ||
@@ -67,7 +78,6 @@ export default {
               } else
                 item.show = false
             })
-            console.log(this.baseStationsGroup)
             // this.delBaseStationById(this.operatorGroup[event.id-1].id)
             // this.baseStationsGroup = this.baseStationsGroup.concat(resp.data.filter(item => {
             //   if ((item.bs_4g === 1 && this.operatorGroup[event.id-1].standart4G === 1) ||
@@ -89,7 +99,6 @@ export default {
               } else
                 item.show = false
             })
-            console.log(this.baseStationsGroup)
             // this.delBaseStationById(this.operatorGroup[event.id-1].id)
             // this.baseStationsGroup = this.baseStationsGroup.concat(resp.data.filter(item => {
             //   if ((item.bs_3g === 1 && this.operatorGroup[event.id-1].standart3G === 1) ||
