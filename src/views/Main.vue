@@ -45,7 +45,7 @@ export default {
         }
       },
       select_st: async function (event) {
-        // const resp = await axios.get(`http://192.168.0.160:5000/bs/${this.operatorGroup[event.id-1].id}`)
+        // const resp = await axios.get(`http://151.0.10.245:5000/bs/${this.operatorGroup[event.id-1].id}`)
         switch (event.st) {
           case '2g':
             this.operatorGroup[event.id-1].standart2G = this.operatorGroup[event.id-1].standart2G ? 0 : 1
@@ -113,7 +113,7 @@ export default {
         }
       },
       getOperators: async function () {
-        const resp = await axios.get('http://192.168.1.180:5000/operators')
+        const resp = await axios.get('http://151.0.10.245:5000/operators')
         this.operatorGroup = resp.data
 
         this.operatorGroup.forEach(item => {
@@ -130,12 +130,35 @@ export default {
         })
       },
       getBaseStationById: async function (id) {
-        const resp = await axios.get(`http://192.168.1.180:5000/bs/${id}`)
-        this.baseStationsGroup = this.baseStationsGroup.concat(resp.data.filter(item => this.baseStationsGroup['bs_name'] === item.bs_name ? false : true ))
+        const resp = await axios.get(`http://151.0.10.245:5000/bs/${id}`)
+        this.baseStationsGroup = this.baseStationsGroup.concat(resp.data.filter(item => {
+          if (item.bs_status) {
+            item.bs_comment += '\nstandart: '
+            if (item.bs_2g)
+              item.bs_comment += '2G '
+            if (item.bs_3g)
+              item.bs_comment += '3G '
+            if (item.bs_4g)
+              item.bs_comment += '4G '
+          }
+          return this.baseStationsGroup['bs_name'] === item.bs_name ? false : true
+        }))
       },
       getBaseStations: async function () {
-        const resp = await axios.get(`http://192.168.1.180:5000/bs/1`)
+        const resp = await axios.get(`http://151.0.10.245:5000/bs/1`)
         this.baseStationsGroup = resp.data
+
+        this.baseStationsGroup.forEach(item => {
+          if (item.bs_status) {
+            item.bs_comment += '\nstandart: '
+            if (item.bs_2g)
+              item.bs_comment += '2G '
+            if (item.bs_3g)
+              item.bs_comment += '3G '
+            if (item.bs_4g)
+              item.bs_comment += '4G '
+          }
+        })
       },
       delBaseStationById: async function (id) {
         this.baseStationsGroup = this.baseStationsGroup.filter(item => item.bs_operator != id)

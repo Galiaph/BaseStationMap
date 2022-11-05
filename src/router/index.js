@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-//import store from '../store/index.js'
+import store from '../store/index.js'
 import Main from '../views/Main.vue'
 
 const routes = [
@@ -20,15 +20,15 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  //if (to.matched.some(record => record.meta.requiresAuth)) {
-    //if (store.getters.isLoggedIn) {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (store.getters.isLoggedIn) {
       next()
-      //return
-    //}
-    //next('/login')
-  //} else {
-    //next()
-  //}
+      return
+    }
+    next('/login')
+  } else {
+    next()
+  }
 })
 
 export default router
