@@ -5,7 +5,10 @@ import Main from '../views/Main.vue'
 const routes = [
   {
     path: '/',
-    component: Main
+    component: Main,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/login',
