@@ -19,7 +19,7 @@ const authInterceptor = (config) => {
     const token = localStorage.getItem('token')
   
     if (token) {
-      config.headers.Authorization = 'Darsan2 ' + token
+      config.headers.Authorization = 'Bearer ' + token
     }
   
     return config
@@ -33,16 +33,24 @@ const errorInterceptor = async error => {
         return Promise.reject(error)
     }
 
+    console.log(error.response.status)
     // all the other error responses
     switch (error.response.status) {
         case 400:
+            console.log('my error 400')
             console.error(error.response.status, error.message)
             break
         case 401: // authentication error, logout the user
+            console.log('my error 401')
             console.error(error.response.status, error.message)
+            await store.dispatch('logout')
+            router.push('/login')
             break
         case 403:
+            console.log('my error 403')
             console.error(error.response.status, error.message)
+            await store.dispatch('logout')
+            router.push('/login')
             break
         //
         // default:

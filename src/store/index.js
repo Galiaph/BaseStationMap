@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
 import moment from 'moment'
+import md5 from 'md5'
 
 // cn: "Вадим Шемятин"
 // expires: "2022-10-28 20:51:05+0300"
@@ -46,17 +47,18 @@ export default createStore({
   actions: {
     async login ({ commit }, user) {
       const formData = new FormData()
-      formData.append('login', user.username)
-      formData.append('password', user.password)
+      formData.append('username', user.username)
+      formData.append('password', md5(user.password))
       const resp = await axios.post(
         'http://151.0.10.245:5000/token',
         formData
       )
+      console.log(resp)
       const token = resp.data.token
       const expires = moment(resp.data.expires, 'YYYY-MM-DD HH:mm:ssZ').unix()
       const userName = resp.data.cn
       const login = resp.data.login
-      axios.defaults.headers.common.Authorization = 'Darsan2 ' + token
+      axios.defaults.headers.common.Authorization = 'Bearer ' + token
       commit('auth_success', {
         token,
         expires,
