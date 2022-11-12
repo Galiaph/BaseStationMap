@@ -53,7 +53,6 @@ export default createStore({
         'http://151.0.10.245:5000/token',
         formData
       )
-      console.log(resp)
       const token = resp.data.token
       const expires = moment(resp.data.expires, 'YYYY-MM-DD HH:mm:ssZ').unix()
       const userName = resp.data.cn

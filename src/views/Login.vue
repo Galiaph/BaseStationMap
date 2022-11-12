@@ -1,30 +1,46 @@
 <template>
-  <div class="login" id="login-box">
-    <div id="login-box-header">
-      <p>Карта покрытия</p>
-    </div><!-- end of login-box-header -->
-    <div id="login-box-body">
-      <form name="main-login-form" @submit.prevent="login">
-        <div class="tex">
-          <label>Имя пользователя</label>
-          <input v-model="username" type="text" autofocus="1" />
-        </div>
-        <div class="tex">
-          <label>Пароль</label>
-          <input v-model="password" type="password"/>
-        </div>
-        <div class="formsubmit">
-          <input type="submit"/>
-        </div>
-      </form>
-    </div><!-- end of login-box-body -->
-    <div id="login-box-footer">
-      <p>
-        <span class="message">Авторизуйтесь, пожалуйста</span>
-        <br/>
-      </p>
-    </div><!-- end of login-box-footer -->
-  </div><!-- end of login-box -->
+<section class="h-100">
+		<div class="container h-100">
+			<div class="row justify-content-sm-center h-100">
+				<div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+					<div class="text-center my-5">
+						<img :src="require('@/assets/logo.jpg')" alt="logo" width="100">
+					</div>
+					<div class="card shadow-lg">
+						<div class="card-body p-5">
+							<h1 class="fs-4 card-title fw-bold mb-4 text-center">Карта покрытия</h1>
+							<form method="POST" class="needs-validation" novalidate="" autocomplete="off" @submit.prevent="login">
+								<div class="mb-3">
+									<label class="mb-2 text-muted" for="email">Login</label>
+									<input v-model="username" type="text" class="form-control" id="nameInput" autofocus required>
+								</div>
+								<div class="mb-3">
+									<div class="mb-2 w-100">
+										<label class="text-muted" for="password">Password</label>
+									</div>
+									<input type="password" class="form-control" v-model="password" id="passInput" required>
+								</div>
+
+								<div class="d-flex align-items-center">
+									<button type="submit" class="btn btn-primary ms-auto">
+										Login
+									</button>
+								</div>
+							</form>
+						</div>
+						<div class="card-footer py-3 border-0">
+							<div class="text-center">
+								Нет аккаунта? <a href="mailto:galiaph@gmail.com" class="text-dark">Тогда тебе ко мне :)</a>
+							</div>
+						</div>
+					</div>
+					<div class="text-center mt-5 text-muted">
+						Copyright &copy; 2022
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 </template>
 
 <script>
@@ -41,13 +57,14 @@ export default {
       const username = this.username
       const password = this.password
 
-      console.log(username + ' ' + password)
       if (!username) {
+        document.getElementById('nameInput').focus()
         // this.error = 'Введите логин'
         return
       }
 
       if (!password) {
+        document.getElementById('passInput').focus()
         // this.error = 'Введите пароль'
         return
       }
@@ -70,63 +87,5 @@ export default {
 }
 </script>
 
-<style scoped>
-body {
-  margin: 8px;
-}
-
-p {
-  margin-top: 16px;
-  margin-bottom: 16px;
-}
-
-div#login-box {
-  margin: 10% 25%;
-  border: 1px solid #7298c3;
-  padding: 0 2%;
-  color: #31608E;
-}
-div#login-box-header {
-  padding: 0 2%;
-  font-weight: bold;
-  font-family: Verdana,Arial,sans-serif;
-  font-size: 16px;
-  border-bottom: 1px solid #7298c3;
-  text-align: center;
-}
-div#login-box-footer {
-  padding: 0 2%;
-  font-family: Verdana,Arial,sans-serif;
-  font-size: 12px;
-  border-top: 1px solid #7298c3;
-  text-align: center;
-}
-div#login-box-body {
-  padding: 1% 2% 1% 2%;
-  font-family: Verdana,Arial,sans-serif;
-  font-size: 12px;
-}
-div#login-box-body div {
-  height: 28px;
-}
-.tex label {
-  display: block;
-  float: left;
-  width: 35%;
-  text-align: right;
-  padding-right: 1%;
-}
-.formsubmit {
-  margin-left: 35%;
-  /* padding-left: 1%; */
-  text-align: left;
-}
-
-input {
-  padding: 1px 2px;
-}
-
-.formsubmit input {
-  padding: 1px 6px;
-}
+<style>
 </style>

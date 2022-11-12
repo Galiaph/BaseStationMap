@@ -184,7 +184,7 @@ export default {
 
 .cnt {
   width: 100%;
-  height: 92%;
+  height: 93%;
   position: absolute;
 }
 
