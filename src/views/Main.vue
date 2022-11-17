@@ -142,7 +142,6 @@ export default {
       },
       delBaseStationById: async function (id) {
         this.baseStationsGroup = this.baseStationsGroup.filter(item => item.bs_operator != id)
-        console.log(this.baseStationsGroup)
       },
     },
     mounted: async function () {
