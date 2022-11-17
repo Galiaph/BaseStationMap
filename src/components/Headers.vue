@@ -94,10 +94,6 @@ export default {
         this.$emit('searchBase', this.searchText)
       }
     }
-    // created: {
-    // },
-    // mounted: async function () {
-    // }
 }
 </script>
 

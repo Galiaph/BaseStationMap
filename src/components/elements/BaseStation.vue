@@ -1,7 +1,7 @@
 <template>
-  <ymap-marker v-if="!show"
-      marker-id="id"
-      cluster-name="color"
+  <ymap-marker v-if="show"
+      :marker-id="name + id"
+      :cluster-name="color"
       :coords="geoLocation"
       :balloon="{header: comment}"
       :icon="{content: name, color: getColor(color, status)}">

@@ -55,6 +55,8 @@ export default createStore({
       )
       const token = resp.data.token
       const expires = moment(resp.data.expires, 'YYYY-MM-DD HH:mm:ssZ').unix()
+      console.log(resp.data.expires)
+      console.log(moment(expires - 300, 'YYYY-MM-DD HH:mm:ssZ').format())
       const userName = resp.data.cn
       const login = resp.data.login
       axios.defaults.headers.common.Authorization = 'Bearer ' + token
