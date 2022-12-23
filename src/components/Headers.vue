@@ -65,7 +65,10 @@
           </li>
         </ul>
         <form class="d-flex" role="search" @submit.prevent="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" v-model="searchText">
+          <input ref="searchinput" class="form-control me-2 dropdown-toggle" type="search" placeholder="Search" aria-label="Search" v-model="searchText" autocomplete="off" aria-expanded="false" @keyup="find" @focus="searchKey(true)" @blur="searchKey(false)">
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="mkdocs-search-query" ref="searchlist">
+            <a v-for="item in searchItem" :key="item" class="dropdown-item" @click="searchClick(item)" href="#">{{ item.bs_name }}</a>
+          </div>
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
       </div>
@@ -78,10 +81,15 @@ export default {
   // eslint-disable-next-line
     name: 'Headers',
     data: () => ({
-      searchText: ''
+      searchText: '',
+      searchItem: [{bs_name: 'No results found'}]
     }),
     props: {
+      baseStations: Array,
       operators: Object
+    },
+    computed: {
+
     },
     methods: {
       select: function (id) {
@@ -92,6 +100,33 @@ export default {
       },
       search: function () {
         this.$emit('searchBase', this.searchText)
+      },
+      searchKey: async function(state) {
+        if (state) {
+          let search = this.$refs.searchlist
+          let rect = this.$refs.searchinput.getBoundingClientRect()       
+          search.style = 'top: ' + (rect.top + 40) +'px;'
+          search.classList.add('show')
+        } else {
+          await setTimeout(() => {
+            this.$refs.searchlist.classList.remove('show')
+          }, 100)
+        }
+      },
+      find: function() {
+        if (this.searchText.length != 0) {
+          this.searchItem = this.baseStations.filter(item => {
+            return item.bs_name.toLocaleLowerCase().includes(this.searchText.toLocaleLowerCase())
+          }).slice(0, 5)
+        } else {
+          this.searchItem = [{bs_name: 'No results found'}]
+        }
+      },
+      searchClick: function(item) {
+        if (item.bs_name === 'No results found') return
+
+        this.searchText = item.bs_name
+        this.search()
       }
     }
 }

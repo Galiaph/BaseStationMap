@@ -25,40 +25,40 @@ export default {
     },
     data: () => ({
         datas: [
-            {
-                markerId: 'sf132',
-                coords: [
-                    [46.641137, 32.614208],
-                    [46.63813, 32.625910]
-                ],
-                options: {
-                    strokeColor: '#00000088',
-                    strokeWidth: 4,
-                    balloonContentLayoutWidth: 300
-                },
-                properties: {
-                    hintContent: 'Ну давай уже тащи'
-                },
-                edit: false,
-                drawing: false
-            },
-            {
-                markerId: 'asdf3',
-                coords: [
-                    [46.631137, 32.604208],
-                    [46.62813, 32.615910]
-                ],
-                options: {
-                    strokeColor: '#00080088',
-                    strokeWidth: 6,
-                    balloonContentLayoutWidth: 300
-                },
-                properties: {
-                    hintContent: 'Ну давай уже тащи2'
-                },
-                edit: false,
-                drawing: false
-            },
+            // {
+            //     markerId: 'sf132',
+            //     coords: [
+            //         [46.641137, 32.614208],
+            //         [46.63813, 32.625910]
+            //     ],
+            //     options: {
+            //         strokeColor: '#00000088',
+            //         strokeWidth: 4,
+            //         balloonContentLayoutWidth: 300
+            //     },
+            //     properties: {
+            //         hintContent: 'Ну давай уже тащи'
+            //     },
+            //     edit: false,
+            //     drawing: false
+            // },
+            // {
+            //     markerId: 'asdf3',
+            //     coords: [
+            //         [46.631137, 32.604208],
+            //         [46.62813, 32.615910]
+            //     ],
+            //     options: {
+            //         strokeColor: '#00080088',
+            //         strokeWidth: 6,
+            //         balloonContentLayoutWidth: 300
+            //     },
+            //     properties: {
+            //         hintContent: 'Ну давай уже тащи2'
+            //     },
+            //     edit: false,
+            //     drawing: false
+            // },
         ],
         edited: null,
         createdLine: false,

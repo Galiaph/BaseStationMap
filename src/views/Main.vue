@@ -1,5 +1,5 @@
 <template>
-  <Headers :operators="operatorGroup" @selected="select_oper($event)" @selected_st="select_st($event)" @searchBase="search_base($event)" />
+  <Headers :operators="operatorGroup" :baseStations="baseStationsGroup" @selected="select_oper($event)" @selected_st="select_st($event)" @searchBase="search_base($event)" />
   <div id="map" class="cnt">
     <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :coords="coord" :zooms="zoom" />
   </div>
@@ -9,7 +9,6 @@
 import Headers from '../components/Headers.vue'
 import Map from '../components/Map.vue'
 import axios from 'axios'
-// import { loadYmap } from 'vue-yandex-maps'
 
 export default {
   name: 'App',
@@ -35,40 +34,6 @@ export default {
           this.coord = [val.bs_latitude, val.bs_longitude]
           this.zoom = 17
         }
-
-        // console.log(this.ymaps)
-
-        // var myPolyline = new this.ymaps.Polyline([
-        //     // Указываем координаты вершин.
-        //     [55.80, 37.50],
-        //     [55.80, 37.40],
-        //     [55.70, 37.50],
-        //     [55.70, 37.40]
-        // ], {}, {
-        //     // Задаем опции геообъекта.
-        //     // Цвет с прозрачностью.
-        //     strokeColor: "#00000088",
-        //     // Ширину линии.
-        //     strokeWidth: 4,
-        //     // Максимально допустимое количество вершин в ломаной.
-        //     editorMaxPoints: 6,
-        //     // Добавляем в контекстное меню новый пункт, позволяющий удалить ломаную.
-        //     editorMenuManager: function (items) {
-        //         items.push({
-        //             title: "Удалить линию",
-        //             onClick: function () {
-        //                 this.myMap.geoObjects.remove(myPolyline)
-        //             }
-        //         })
-        //         return items
-        //     }
-        // })
-
-        // // Добавляем линию на карту.
-        // this.myMap.geoObjects.add(myPolyline)
-
-        // // Включаем режим редактирования.
-        // myPolyline.editor.startEditing()
       },
       select_oper: function (event) {
         this.operatorGroup[event].change = !this.operatorGroup[event].change
@@ -180,26 +145,9 @@ export default {
       },
     },
     mounted: async function () {
-      // const settings = {
-      //     apiKey: '28cc09a4-4cc8-4c92-bd21-2ee1e9d192b8',
-      //     lang: 'ru_RU',
-      //     coordorder: 'latlong',
-      //     enterprise: false,
-      //     version: '2.1'
-      // }
-      // await loadYmap(settings)
-      // // eslint-disable-next-line
-      // this.ymaps = ymaps
-      // this.myMap = new this.ymaps.Map("map", {
-      //     center: this.coord,
-      //     zoom: this.zoom
-      // }, {
-      //     searchControlProvider: 'yandex#search'
-      // })
-
       try {
         this.getOperators()
-        // this.getBaseStationById(1)
+        this.getBaseStationById(1)
       } catch (err) {
         console.error('error in headers mounted')
       }
