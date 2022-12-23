@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
-import ymapPlugin from 'vue-yandex-maps'
+import ymapPlugin from './vue-yandex-maps'
 import axios from 'axios'
 import router from "./router"
 import store from './store'
@@ -61,5 +61,5 @@ const errorInterceptor = async error => {
 
 axios.interceptors.request.use(authInterceptor)
 axios.interceptors.response.use(undefined, errorInterceptor)
-
-createApp(App).use(store).use(router).use(ymapPlugin, settings).mount('#app')
+//.use(ymapPlugin, settings)
+createApp(App).use(store).use(ymapPlugin, settings).use(router).mount('#app')
