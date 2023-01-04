@@ -82,7 +82,7 @@ export default {
   },
   mounted() {
     Object.keys(this.$props).forEach((prop) => {
-      if (prop === 'balloonComponentProps' || prop === 'edit' || prop === 'drawing' || prop === 'coords') return;
+      if (prop === 'balloonComponentProps' || prop === 'edit' || prop === 'drawing' || prop === 'coords' || prop === 'options' || prop === 'properties') return;
       this.unwatchArr.push(this.$watch(
         prop,
         (newVal, oldVal) => this.compareValues({
@@ -110,9 +110,18 @@ export default {
     }))
 
     this.unwatchArr.push(this.$watch('coords', (newVal, oldVal) => {
-      // if (newVal) {
-        temp.geometry.setCoordinates(newVal)
-      // }
+      temp.geometry.setCoordinates(newVal)
+    }))
+
+    this.unwatchArr.push(this.$watch('options', (newVal, oldVal) => {
+      temp.options.set({
+        strokeColor: newVal.strokeColor,
+        strokeWidth: newVal.strokeWidth
+      })
+    }))
+
+    this.unwatchArr.push(this.$watch('properties', (newVal, oldVal) => {
+      temp.properties.set('hintContent', newVal.hintContent)
     }))
 
     this.addMarker(temp)

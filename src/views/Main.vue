@@ -146,8 +146,8 @@ export default {
     },
     mounted: async function () {
       try {
-        this.getOperators()
-        this.getBaseStationById(1)
+        //this.getOperators()
+        //this.getBaseStationById(1)
       } catch (err) {
         console.error('error in headers mounted')
       }

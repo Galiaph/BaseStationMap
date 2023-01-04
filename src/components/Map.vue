@@ -1,7 +1,7 @@
 <template>
     <yandex-map @map-was-initialized="handler" @click.left="mapClick" :coords="coords" :zoom="zooms" :controls="['geolocationControl','rulerControl', 'searchControl', 'typeSelector', 'zoomControl']" :detailedControls="{ Line: { image: images, options: { float: 'right', selectOnClick: false }, events: { 'click': select } } }">
         <baseStationsArr v-for="(item) of baseStations" :key="item" :id="item.id" :show="item.show" :comment="item.bs_comment" :status="item.bs_status" :geoLocation="[item.bs_latitude, item.bs_longitude]" :name="item.bs_name" :color="item.bs_operator" />
-        <test v-for="item in datas" :key="item" @click.prevent ="edit(item)" @editorstatechange="editorchange(item, $event)" :edit="item.edit" :drawing="item.drawing" :refs="item.markerId" :markerId="item.markerId" marker-type="Polyline" :coords="item.coords" :options="item.options" :properties="item.properties" :balloon-template="balloonTemplate" @balloonopen="bindListener"/>
+        <test v-for="item in datas" :key="item" @click.prevent ="edit(item)" @editorstatechange="editorchange(item, $event)" :edit="item.edit" :drawing="item.drawing" :refs="item.markerId" :markerId="item.markerId" marker-type="Polyline" :coords="item.coords" :options="item.options" :properties="item.properties" :balloon-template="balloonTemplate" @balloonopen="bindListener" @balloonclose="unbindListener"/>
     </yandex-map>
 </template>
 
@@ -24,43 +24,9 @@ export default {
       zooms: Number
     },
     data: () => ({
-        datas: [
-            // {
-            //     markerId: 'sf132',
-            //     coords: [
-            //         [46.641137, 32.614208],
-            //         [46.63813, 32.625910]
-            //     ],
-            //     options: {
-            //         strokeColor: '#00000088',
-            //         strokeWidth: 4,
-            //         balloonContentLayoutWidth: 300
-            //     },
-            //     properties: {
-            //         hintContent: 'Ну давай уже тащи'
-            //     },
-            //     edit: false,
-            //     drawing: false
-            // },
-            // {
-            //     markerId: 'asdf3',
-            //     coords: [
-            //         [46.631137, 32.604208],
-            //         [46.62813, 32.615910]
-            //     ],
-            //     options: {
-            //         strokeColor: '#00080088',
-            //         strokeWidth: 6,
-            //         balloonContentLayoutWidth: 300
-            //     },
-            //     properties: {
-            //         hintContent: 'Ну давай уже тащи2'
-            //     },
-            //     edit: false,
-            //     drawing: false
-            // },
-        ],
+        datas: [],
         edited: null,
+        balloon: null,
         createdLine: false,
         mySelected: false,
         newLine: {},
@@ -73,53 +39,19 @@ export default {
                 <div class="balloon-setup balloon-setup_js_inited balloon-setup_lang_ru">
                 <label class="balloon-setup__description">
                     <div class="balloon-setup__description-label-text">Описание</div>
-                    <textarea class="textarea textarea_theme_islands textarea_size_m textarea_width_available textarea_fire-blur-change textarea__control textarea_js_inited textarea__control_js_inited" placeholder="Текст будет виден при клике по объекту" rows="4"></textarea>
+                    <textarea id="textfield" class="textarea textarea_theme_islands textarea_size_m textarea_width_available textarea_fire-blur-change textarea__control textarea_js_inited textarea__control_js_inited" placeholder="Текст будет виден при клике по объекту" rows="4"></textarea>
                 </label>
                 <div class="balloon-setup__line-options balloon-setup__grid">
                     <div class="balloon-setup__row">
                         <label class="balloon-setup__color-option">
                             <span class="balloon-setup__label-text">Цвет</span>
-                            <div class="select select_mode_radio select_theme_colors select_size_m select_js_inited">
-                                <input class="select__control select__control_js_inited" type="hidden" name="color" value="7" autocomplete="off">
-                                <button class="button button_size_m button_theme_colors select__button button__control button_js_inited button__control_js_inited _popup-destructor_js_inited" role="listbox" type="button" id="btn_color">
-                                    <span class="button__text button__text_js_inited">7</span>
-                                    <span class="icon select__tick"></span>
-                                </button>
-                                <div class="popup popup_target_anchor popup_theme_colors popup_autoclosable popup_js_inited" aria-hidden="true">
-                                    <div class="menu menu_size_m menu_theme_colors menu_mode_radio select__menu menu__control menu__control menu_js_inited menu__control_js_inited">
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_0 menu__item_js_inited" role="option" aria-checked="false">0</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_1 menu__item_js_inited" role="option" aria-checked="false">1</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_2 menu__item_js_inited" role="option" aria-checked="false">2</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_3 menu__item_js_inited" role="option" aria-checked="false">3</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_4 menu__item_js_inited" role="option" aria-checked="false">4</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_5 menu__item_js_inited" role="option" aria-checked="false">5</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_6 menu__item_js_inited" role="option" aria-checked="false">6</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_js_inited menu__item_checked" role="option" aria-checked="true">7</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_8 menu__item_js_inited" role="option" aria-checked="false">8</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_9 menu__item_js_inited" role="option" aria-checked="false">9</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_10 menu__item_js_inited" role="option" aria-checked="false">10</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_11 menu__item_js_inited" role="option" aria-checked="false">11</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_12 menu__item_js_inited" role="option" aria-checked="false">12</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_13 menu__item_js_inited" role="option" aria-checked="false">13</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_14 menu__item_js_inited" role="option" aria-checked="false">14</div>
-                                        <div class="menu__item menu__item_theme_colors menu__item_index_15 menu__item_js_inited" role="option" aria-checked="false">15</div>
-                                    </div>
-                                </div>
-                            </div>
+                            <input id="inputcolor" type="color" id="head" value="#480088">
                         </label>
-                        <label class="balloon-setup__transparency-field balloon-setup__center-cell">
-                            <div class="balloon-setup__label-text">Прозрачность (%)</div>
-                            <span class="input input_theme_islands input_size_m input_type_number input_range balloon-setup__stroke-opacity input_js_inited" data-min="0" data-max="100">
-                                <span class="input__box">
-                                    <input class="input__control input__control_js_inited" maxlength="3">
-                                </span>
-                            </span>
-                        </label>
-                            <label class="balloon-setup__width-field balloon-setup__right-cell">
+                        <label class="balloon-setup__width-field balloon-setup__right-cell">
                             <div class="balloon-setup__label-text">Толщина</div>
-                            <span class="input input_theme_islands input_size_m input_type_number input_range balloon-setup__stroke-width input_js_inited" data-min="0" data-max="99">
+                            <span id="spansize" class="input input_theme_islands input_size_m input_type_number input_range balloon-setup__stroke-width input_js_inited" data-min="0" data-max="99">
                                 <span class="input__box">
-                                    <input class="input__control input__control_js_inited" maxlength="2">
+                                    <input id="inputsize" class="input__control input__control_js_inited" type="number" maxlength="2" value="4" min="1" max="10" required>
                                 </span>
                             </span>
                         </label>
@@ -140,16 +72,47 @@ export default {
     },
     methods: {
         bindListener() {
-            let btn = document.getElementById('btn_color')
             let btn_ok = document.getElementById('btn_ok')
             let btn_close = document.getElementById('btn_close')
+            let text = document.getElementById('textfield')
+            let size = document.getElementById('inputsize')
+            let color = document.getElementById('inputcolor')
 
-            btn.addEventListener('click', this.handlers)            
-            btn.addEventListener('mouseenter', () => {
-                btn.classList.add('button_hovered')
+            if (this.edited) {
+                size.value = this.edited.options.strokeWidth
+                color.value = this.edited.options.strokeColor
+                text.value = this.edited.properties.hintContent
+            }
+
+            btn_ok.addEventListener('click', () => {
+                this.edited.options = {
+                            strokeColor: color.value,
+                            strokeWidth: size.value,
+                            balloonContentLayoutWidth: 300
+                        }
+
+                this.edited.properties = {
+                    hintContent: text.value
+                }
+
+                this.balloon.close()
+                this.balloon = null
+                this.edited = null
             })
-            btn.addEventListener('mouseleave', () => {
-                btn.classList.remove('button_hovered')
+
+            btn_close.addEventListener('click', () => {
+                this.datas = this.datas.filter(el => el.markerId != this.edited.markerId)
+
+                this.balloon.close()
+                this.balloon = null
+                this.edited = null
+            })
+
+            text.addEventListener('focus', () => {
+                text.classList.add('textarea_focused')
+            })
+            text.addEventListener('blur', () => {
+                text.classList.remove('textarea_focused')
             })
 
             btn_ok.addEventListener('mouseenter', () => {
@@ -167,23 +130,24 @@ export default {
             })
         },
         unbindListener() {
-            document.getElementById('btn').removeEventListener('click', this.handlers)
-        },
-        handlers() {
-            alert('Whoo-Ha!')
+            if (this.edited) {
+                this.edited.edit = false
+                this.edited.drawing = false
+                this.edited = null
+                this.balloon = null
+            }
         },
         handler: function(el) {
             this.myMap = el
         },
         edit: function(el) {
-            // console.log('edit')
-            if (this.edited) {
+            if (this.edited != null && el == this.edited) {
                 this.edited.edit = false
                 this.edited.drawing = false
+            } else if (!this.edited) {
+                this.edited = el
+                el.edit = !el.edit
             }
-
-            this.edited = el
-            el.edit = !el.edit
         },
         // change: function(e) { @geometrychange="change($event)"
         //     console.log('change')
@@ -191,15 +155,14 @@ export default {
         //     this.newCoordinates = e.originalEvent.originalEvent.get('newCoordinates')
         // },
         editorchange: function(item, e) {
-            // console.log(e.originalEvent.target.geometry.getCoordinates())
-            if (!e.originalEvent.originalEvent.get('newEditing')) {
-                //console.log(e)
+            if (!e.originalEvent.originalEvent.get('newEditing') && !this.balloon) {
+                this.balloon = e.originalEvent.target.balloon
                 e.originalEvent.target.balloon.open()
                 item.coords = e.originalEvent.target.geometry.getCoordinates()
             }
         },
         select: function() {
-            if (!this.createdLine)
+            if (!this.createdLine && !this.edited)
                 this.createdLine = true
         },
         mapClick: async function(ev) {
@@ -213,7 +176,7 @@ export default {
                             ev.get('coords')
                         ],
                         options: {
-                            strokeColor: '#00480088',
+                            strokeColor: '#66ffff',
                             strokeWidth: 4,
                             balloonContentLayoutWidth: 300
                         },
@@ -242,7 +205,6 @@ export default {
                  if (this.edited) {
                     this.edited.edit = false
                     this.edited.drawing = false
-                    this.edited = null
                  }
             }
         })
