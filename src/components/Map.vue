@@ -1,7 +1,7 @@
 <template>
-    <yandex-map @map-was-initialized="handler" @click.left="mapClick" :coords="coords" :zoom="zooms" :controls="['geolocationControl','rulerControl', 'searchControl', 'typeSelector', 'zoomControl']" :detailedControls="{ Line: { image: images, options: { float: 'right', selectOnClick: false }, events: { 'click': select } } }">
+    <yandex-map @map-was-initialized="handler" @click.left="mapClick" :coords="coords" :zoom="zooms" :controls="['geolocationControl','rulerControl', 'searchControl', 'typeSelector', 'zoomControl']" :detailedControls="buttonLine">
         <baseStationsArr v-for="(item) of baseStations" :key="item" :id="item.id" :show="item.show" :comment="item.bs_comment" :status="item.bs_status" :geoLocation="[item.bs_latitude, item.bs_longitude]" :name="item.bs_name" :color="item.bs_operator" />
-        <test v-for="item in datas" :key="item" @click.prevent ="edit(item)" @editorstatechange="editorchange(item, $event)" :edit="item.edit" :drawing="item.drawing" :refs="item.markerId" :markerId="item.markerId" marker-type="Polyline" :coords="item.coords" :options="item.options" :properties="item.properties" :balloon-template="balloonTemplate" @balloonopen="bindListener" @balloonclose="unbindListener"/>
+        <test v-for="item in lines" :key="item" @click.prevent ="edit(item)" @editorstatechange="editorchange(item, $event)" :edit="item.edit" :drawing="item.drawing" :refs="item.markerId" :markerId="item.markerId" marker-type="Polyline" :coords="item.coords" :options="item.options" :properties="item.properties" :balloon-template="balloonTemplate" @balloonopen="bindListener" @balloonclose="unbindListener"/>
     </yandex-map>
 </template>
 
@@ -20,20 +20,35 @@ export default {
     props: {
       baseStations: Object,
       operators: Object,
+      lines: Object,
       coords: Array,
       zooms: Number
     },
     data: () => ({
-        datas: [],
         edited: null,
         balloon: null,
         createdLine: false,
         mySelected: false,
-        newLine: {},
         myMap: null,
         images: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPiAgICAgICAgPHRpdGxlPmxpbmU8L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4gICAgPGRlZnM+PC9kZWZzPiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4gICAgICAgIDxnIGlkPSJMaW5lLTEyLSstT3ZhbC0yMy0rLU92YWwtMjQiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiPiAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMy41MTA4MzA5LDIuNDg5MTY5NDIgTDEuOTY0MzMxMjEsMTQuMDM1NjY5MyIgaWQ9IkxpbmUtMTIiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+ICAgICAgICAgICAgPGNpcmNsZSBpZD0iT3ZhbC0yMyIgZmlsbD0iIzY2NiIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCIgY3g9IjIiIGN5PSIxNCIgcj0iMiI+PC9jaXJjbGU+ICAgICAgICAgICAgPGNpcmNsZSBpZD0iT3ZhbC0yNCIgZmlsbD0iIzY2NiIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCIgY3g9IjE0IiBjeT0iMiIgcj0iMiI+PC9jaXJjbGU+ICAgICAgICA8L2c+ICAgIDwvZz48L3N2Zz4='
     }),
     computed: {
+        buttonLine() {
+            if (this.$store.getters.getRoot == 0)
+                return {}
+            else
+                return {
+                    Line: {
+                        image: this.images,
+                        options: {
+                            float: 'right',
+                            selectOnClick: false
+                        },
+                        events: {
+                            'click': this.select
+                        }
+                    }}
+        },
         balloonTemplate() {
             return `
                 <div class="balloon-setup balloon-setup_js_inited balloon-setup_lang_ru">
@@ -88,12 +103,13 @@ export default {
                 this.edited.options = {
                             strokeColor: color.value,
                             strokeWidth: size.value,
-                            balloonContentLayoutWidth: 300
                         }
 
                 this.edited.properties = {
                     hintContent: text.value
                 }
+
+                this.$emit('save', this.edited)
 
                 this.balloon.close()
                 this.balloon = null
@@ -101,7 +117,7 @@ export default {
             })
 
             btn_close.addEventListener('click', () => {
-                this.datas = this.datas.filter(el => el.markerId != this.edited.markerId)
+                this.$emit('del', this.edited)
 
                 this.balloon.close()
                 this.balloon = null
@@ -141,6 +157,9 @@ export default {
             this.myMap = el
         },
         edit: function(el) {
+            if (this.$store.getters.getRoot == 0)
+                return
+
             if (this.edited != null && el == this.edited) {
                 this.edited.edit = false
                 this.edited.drawing = false
@@ -170,15 +189,14 @@ export default {
                 if (this.createdLine) {
                     this.createdLine = false
 
-                    this.newLine = {
-                        markerId: 'key' + this.datas.length,
+                    this.edited = {
+                        markerId: 'key' + this.lines.length,
                         coords: [
                             ev.get('coords')
                         ],
                         options: {
                             strokeColor: '#66ffff',
-                            strokeWidth: 4,
-                            balloonContentLayoutWidth: 300
+                            strokeWidth: 4
                         },
                         properties: {
                             hintContent: ''
@@ -187,13 +205,13 @@ export default {
                         drawing: false
                     }
 
-                    this.datas.push(this.newLine)
-                    this.edited = this.newLine
+                    this.$emit('add', this.edited)
+
                     await setTimeout(() => {
-                        this.newLine.edit = true
+                        this.edited.edit = true
                     }, 100)
                     await setTimeout(() => {
-                        this.newLine.drawing = true
+                        this.edited.drawing = true
                     }, 200)
                 }
             }

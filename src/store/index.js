@@ -15,7 +15,8 @@ export default createStore({
     token: localStorage.getItem('token') || '',
     expires: Number(localStorage.getItem('expires')) || 0,
     userName: localStorage.getItem('user_name') || '',
-    login: localStorage.getItem('login') || ''
+    login: localStorage.getItem('login') || '',
+    root_access: localStorage.getItem('root_access') || false
   },
   mutations: {
     auth_success (state, payload) {
@@ -24,10 +25,12 @@ export default createStore({
       state.expires = payload.expires
       state.userName = payload.userName
       state.login = payload.login
+      state.root_access = payload.root_access
       localStorage.setItem('token', state.token)
       localStorage.setItem('expires', state.expires)
       localStorage.getItem('user_name', state.userName)
       localStorage.setItem('login', state.login)
+      localStorage.setItem('root_access', state.root_access)
     },
     auth_error (state) {
       state.status = 'error'
@@ -40,6 +43,7 @@ export default createStore({
       state.expires = 0
       state.userName = ''
       state.login = ''
+      state.root_access = false
       localStorage.removeItem('token')
       localStorage.removeItem('expires')
     }
@@ -57,12 +61,14 @@ export default createStore({
       const expires = moment(resp.data.expires, 'YYYY-MM-DD HH:mm:ssZ').unix()
       const userName = resp.data.cn
       const login = resp.data.login
+      const root_access = resp.data.root_access
       axios.defaults.headers.common.Authorization = 'Bearer ' + token
       commit('auth_success', {
         token,
         expires,
         userName,
-        login
+        login,
+        root_access
       })
     },
     async logout ({ commit }) {
@@ -81,7 +87,8 @@ export default createStore({
     },
     authStatus: state => state.status,
     getToken: state => state.token,
-    getLogin: state => state.login
+    getLogin: state => state.login,
+    getRoot: state => state.root_access
   },
   modules: {
   }

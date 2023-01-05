@@ -1,7 +1,7 @@
 <template>
-  <Headers :operators="operatorGroup" :baseStations="baseStationsGroup" @selected="select_oper($event)" @selected_st="select_st($event)" @searchBase="search_base($event)" />
+  <Headers :operators="operatorGroup" :baseStations="baseStationsGroup" @selected="select_oper($event)" @selected_line="selecte_line($event)" @selected_st="select_st($event)" @searchBase="search_base($event)" />
   <div id="map" class="cnt">
-    <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :coords="coord" :zooms="zoom" />
+    <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :lines="linesGroup" :coords="coord" :zooms="zoom" @add="add_line($event)" @del="del_line($event)" @save="save_line($event)" />
   </div>
 </template>
 
@@ -19,6 +19,8 @@ export default {
   data: () => ({
     baseStationsGroup: [],
     operatorGroup: [],
+    linesGroup: [],
+    compareId: [],
     appTitle: 'Base map',
     coord: [46.63, 32.62],
     zoom: 12
@@ -27,6 +29,38 @@ export default {
       chZoom: function (event) {
         this.zoom = event
       },
+      add_line: function (event) {
+        this.linesGroup.push(event)
+      },
+      del_line: async function (event) {
+        let item = null
+
+        if (typeof(event.markerId) == 'number')
+          item = event.markerId
+        else
+          item = this.compareId.find(el => el.markerId == event.markerId).id
+
+        if (item) {
+          this.linesGroup = this.linesGroup.filter(el => el.markerId != event.markerId)
+          const resp = await axios.post('http://151.0.10.245:5000/del', {'id': item})
+
+          if (resp.status != 200) {
+            console.log('Server not saved line')
+            console.log(resp)
+          }
+        }
+      },
+      save_line: async function (event) {
+        const resp = await axios.post('http://151.0.10.245:5000/add', {'line': event})
+
+        if (resp.status != 200) {
+          console.log('Server not saved line')
+          console.log(resp)
+        } else {
+          this.compareId.push({'id': resp.data.id, 'markerId': event.markerId})
+
+        }
+      },
       search_base: function (event) {
         const val = this.baseStationsGroup.filter(item => item.bs_name == event)[0]
 
@@ -34,6 +68,12 @@ export default {
           this.coord = [val.bs_latitude, val.bs_longitude]
           this.zoom = 17
         }
+      },
+      selecte_line: function (event) {
+        if (event)
+          this.getLines()
+        else
+          this.linesGroup = []
       },
       select_oper: function (event) {
         this.operatorGroup[event].change = !this.operatorGroup[event].change
@@ -140,14 +180,34 @@ export default {
           }
         })
       },
+      getLines: async function () {
+        const resp = await axios.get(`http://151.0.10.245:5000/lines`)
+        this.linesGroup = resp.data.map(el => {
+          let item = {
+              markerId: el.id,
+              coords: el.geoCoords,
+              options: {
+                  strokeColor: el.stroke_color,
+                  strokeWidth: el.stroke_width
+              },
+              properties: {
+                  hintContent: el.hint
+              },
+              edit: false,
+              drawing: false
+          }
+
+          return item
+        })
+      },
       delBaseStationById: async function (id) {
         this.baseStationsGroup = this.baseStationsGroup.filter(item => item.bs_operator != id)
       },
     },
     mounted: async function () {
       try {
-        //this.getOperators()
-        //this.getBaseStationById(1)
+        this.getOperators()
+        this.getBaseStationById(1)
       } catch (err) {
         console.error('error in headers mounted')
       }

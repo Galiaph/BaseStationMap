@@ -1,10 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg" style="background-color: #e3f2fd;">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Base stations</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+      <span class="navbar-brand" href="#">Карта сети</span>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item dropdown">
@@ -64,6 +61,12 @@
             </div>
           </li>
         </ul>
+        <div class="form-check right">
+          <input class="form-check-input" type="checkbox" value="false" id="flexCheckDefault" @click="lineChange">
+          <label class="form-check-label" for="flexCheckDefault">
+            Магистрали
+          </label>
+        </div>
         <form class="d-flex" role="search" @submit.prevent="search">
           <input ref="searchinput" class="form-control me-2 dropdown-toggle" type="search" placeholder="Search" aria-label="Search" v-model="searchText" autocomplete="off" aria-expanded="false" @keyup="find" @focus="searchKey(true)" @blur="searchKey(false)">
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="mkdocs-search-query" ref="searchlist">
@@ -82,16 +85,20 @@ export default {
     name: 'Headers',
     data: () => ({
       searchText: '',
-      searchItem: [{bs_name: 'No results found'}]
+      searchItem: [{bs_name: 'No results found'}],
+      line: false
     }),
     props: {
       baseStations: Array,
       operators: Object
     },
     computed: {
-
     },
     methods: {
+      lineChange: function() {
+        this.line = !this.line
+        this.$emit('selected_line', this.line)
+      },
       select: function (id) {
         this.$emit('selected', id)
       },
@@ -133,4 +140,7 @@ export default {
 </script>
 
 <style>
+.form-check,.right {
+  padding-right: 10px;
+}
 </style>

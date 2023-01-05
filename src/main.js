@@ -41,14 +41,14 @@ const errorInterceptor = async error => {
             console.error(error.response.status, error.message)
             break
         case 401: // authentication error, logout the user
-            console.log('my error 401')
-            console.error(error.response.status, error.message)
+            // console.log('my error 401')
+            // console.error(error.response.status, error.message)
             await store.dispatch('logout')
             router.push('/login')
             break
         case 403:
-            console.log('my error 403')
-            console.error(error.response.status, error.message)
+            // console.log('my error 403')
+            // console.error(error.response.status, error.message)
             await store.dispatch('logout')
             router.push('/login')
             break
