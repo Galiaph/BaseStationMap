@@ -33,32 +33,32 @@ export default {
         this.linesGroup.push(event)
       },
       del_line: async function (event) {
-        let item = null
+        let item = this.compareId.find(el => el.markerId == event.markerId)
 
-        if (typeof(event.markerId) == 'number')
-          item = event.markerId
-        else
-          item = this.compareId.find(el => el.markerId == event.markerId).id
+        this.linesGroup = this.linesGroup.filter(el => el.markerId != event.markerId)
+        const resp = await axios.post('http://151.0.10.245:5000/del', {'id': item ? item.id : event.markerId})
 
-        if (item) {
-          this.linesGroup = this.linesGroup.filter(el => el.markerId != event.markerId)
-          const resp = await axios.post('http://151.0.10.245:5000/del', {'id': item})
-
-          if (resp.status != 200) {
-            console.log('Server not saved line')
-            console.log(resp)
-          }
+        if (resp.status != 200) {
+          console.log('Server not saved line')
+          console.log(resp)
         }
       },
       save_line: async function (event) {
-        const resp = await axios.post('http://151.0.10.245:5000/add', {'line': event})
+        let item = this.compareId.find(el => el.markerId == event.markerId)
+
+        const resp = await axios.post('http://151.0.10.245:5000/add', {'line': {
+                        markerId: item ? item.id : event.markerId,
+                        coords: event.coords,
+                        options: event.options,
+                        properties: event.properties
+                    }})
 
         if (resp.status != 200) {
           console.log('Server not saved line')
           console.log(resp)
         } else {
-          this.compareId.push({'id': resp.data.id, 'markerId': event.markerId})
-
+          if (!item)
+            this.compareId.push({'id': resp.data.id, 'markerId': event.markerId})
         }
       },
       search_base: function (event) {
