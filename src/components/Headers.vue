@@ -63,6 +63,23 @@
               </ul>
             </div>
           </li>
+          <li class="nav-item dropdown" v-show="lines.length">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Линии
+            </a>
+            <ul class="dropdown-menu">
+              <li v-for="item in lines" :key="item" :data="item">
+                <a @click.prevent="select_ln(item.markerId)" class="dropdown-item" href="#">{{ item.properties.hintContent }}
+                  <!-- <svg v-show="!item.change" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left float-end mt-1" viewBox="0 0 16 16">
+                    <path d="M10 12.796V3.204L4.519 8 10 12.796zm-.659.753-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z"/>
+                  </svg> -->
+                  <svg v-show="item.selected" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill float-end mt-1" viewBox="0 0 16 16">
+                    <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </li>
         </ul>
         <div class="form-check right">
           <input class="form-check-input" type="checkbox" value="false" id="flexCheckDefault" @click="lineChange">
@@ -93,7 +110,8 @@ export default {
     }),
     props: {
       baseStations: Array,
-      operators: Object
+      operators: Object,
+      lines: Object,
     },
     computed: {
     },
@@ -107,6 +125,9 @@ export default {
       },
       select_st: function (id, st) {
         this.$emit('selected_st', {'id': id, 'st': st})
+      },
+      select_ln: function (id) {
+        this.$emit('selected_ln', id)
       },
       search: function () {
         this.$emit('searchBase', this.searchText)

@@ -1,7 +1,7 @@
 <template>
-  <Headers :operators="operatorGroup" :baseStations="baseStationsGroup" @selected="select_oper($event)" @selected_line="selecte_line($event)" @selected_st="select_st($event)" @searchBase="search_base($event)" />
+  <Headers :operators="operatorGroup" :baseStations="baseStationsGroup" :lines="linesGroup" @selected="select_oper($event)" @selected_line="selecte_line($event)" @selected_st="select_st($event)" @selected_ln="select_ln($event)" @searchBase="search_base($event)" />
   <div id="map" class="cnt">
-    <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :lines="linesGroup" :coords="coord" :zooms="zoom" @add="add_line($event)" @del="del_line($event)" @save="save_line($event)" />
+    <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :lines="linesGroup2" :coords="coord" :zooms="zoom" @add="add_line($event)" @del="del_line($event)" @save="save_line($event)" />
   </div>
 </template>
 
@@ -20,6 +20,7 @@ export default {
     baseStationsGroup: [],
     operatorGroup: [],
     linesGroup: [],
+    linesGroup2: [],
     compareId: [],
     appTitle: 'Base map',
     coord: [46.63, 32.62],
@@ -73,7 +74,7 @@ export default {
         if (event)
           this.getLines()
         else
-          this.linesGroup = []
+          this.linesGroup = this.linesGroup2 = []
       },
       select_oper: function (event) {
         this.operatorGroup[event].change = !this.operatorGroup[event].change
@@ -85,6 +86,20 @@ export default {
           this.operatorGroup[event].standart2G = 1
           this.operatorGroup[event].standart3G = 1
           this.operatorGroup[event].standart4G = 1
+        }
+      },
+      select_ln: function (event) {
+        if (this.linesGroup2.length == 1 && this.linesGroup2[0].markerId == event) {
+          this.linesGroup.forEach(el => el.selected = false )
+          this.linesGroup2 = this.linesGroup
+        } else {
+          this.linesGroup.forEach(el => { if (el.markerId == this.linesGroup2[0].markerId) el.selected = false })
+          this.linesGroup2 = this.linesGroup.filter(el => {
+            if (el.markerId == event) {
+              el.selected = true
+              return el
+            } 
+          })
         }
       },
       select_st: async function (event) {
@@ -194,11 +209,14 @@ export default {
                   hintContent: el.hint
               },
               edit: false,
-              drawing: false
+              drawing: false,
+              selected: false
           }
 
           return item
         })
+
+         this.linesGroup2 =  this.linesGroup
       },
       delBaseStationById: async function (id) {
         this.baseStationsGroup = this.baseStationsGroup.filter(item => item.bs_operator != id)
