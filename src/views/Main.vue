@@ -1,7 +1,7 @@
 <template>
   <Headers :operators="operatorGroup" :baseStations="baseStationsGroup" :lines="linesGroup" @selected="select_oper($event)" @selected_line="selecte_line($event)" @selected_st="select_st($event)" @selected_ln="select_ln($event)" @searchBase="search_base($event)" />
   <div id="map" class="cnt">
-    <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :lines="linesGroup2" :coords="coord" :zooms="zoom" @add="add_line($event)" @del="del_line($event)" @save="save_line($event)" />
+    <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :lines="linesGroup2" :uplinks="uplinks" :coords="coord" :zooms="zoom" @add="add_line($event)" @del="del_line($event)" @save="save_line($event)" />
   </div>
 </template>
 
@@ -22,6 +22,7 @@ export default {
     linesGroup: [],
     linesGroup2: [],
     compareId: [],
+    uplinks: [],
     appTitle: 'Base map',
     coord: [46.63, 32.62],
     zoom: 12
@@ -71,10 +72,13 @@ export default {
         }
       },
       selecte_line: function (event) {
-        if (event)
+        if (event) {
           this.getLines()
-        else
+          this.getUplinks()
+        } else {
           this.linesGroup = this.linesGroup2 = []
+          this.uplinks = []
+        }
       },
       select_oper: function (event) {
         this.operatorGroup[event].change = !this.operatorGroup[event].change
@@ -98,7 +102,7 @@ export default {
             if (el.markerId == event) {
               el.selected = true
               return el
-            } 
+            }
           })
         }
       },
@@ -217,6 +221,18 @@ export default {
         })
 
          this.linesGroup2 =  this.linesGroup
+      },
+      getUplinks: async function() {
+        const resp = await axios.get(`http://151.0.10.245:5000/uplinks`)
+        this.uplinks = resp.data.map(el => {
+          let item = {
+              id: el.id,
+              coords: [el.bs_latitude, el.bs_longitude],
+              providers: el.providers
+          }
+
+          return item
+        })
       },
       delBaseStationById: async function (id) {
         this.baseStationsGroup = this.baseStationsGroup.filter(item => item.bs_operator != id)
