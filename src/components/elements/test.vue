@@ -116,7 +116,8 @@ export default {
     this.unwatchArr.push(this.$watch('options', (newVal, oldVal) => {
       temp.options.set({
         strokeColor: newVal.strokeColor,
-        strokeWidth: newVal.strokeWidth
+        strokeWidth: newVal.strokeWidth,
+        preset: newVal.preset
       })
     }))
 

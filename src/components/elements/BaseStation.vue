@@ -33,6 +33,8 @@ export default {
           return 'yellow'
         case 4:
           return 'green'
+        case 5:
+          return 'olive'
         default:
           return 'grey'
       }

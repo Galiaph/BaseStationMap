@@ -1,7 +1,7 @@
 <template>
-  <Headers :operators="operatorGroup" :baseStations="baseStationsGroup" :lines="linesGroup" @selected="select_oper($event)" @selected_line="selecte_line($event)" @selected_st="select_st($event)" @selected_ln="select_ln($event)" @searchBase="search_base($event)" />
+  <Headers :operators="operatorGroup" :baseStations="baseStationsGroup" :lines="linesGroup" :providers="providers" @selected="select_oper($event)" @selected_p="select_prov($event)" @selected_line="selecte_line($event)" @selected_st="select_st($event)" @selected_ln="select_ln($event)" @searchBase="search_base($event)" />
   <div id="map" class="cnt">
-    <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :lines="linesGroup2" :uplinks="uplinks" :coords="coord" :zooms="zoom" @add="add_line($event)" @del="del_line($event)" @save="save_line($event)" />
+    <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :lines="linesGroup2" :uplinks="uplinks" :coords="coord" :zooms="zoom" :providers="providers" :providers_geo="providers_geo" @add="add_line($event)" @del="del_line($event)" @save="save_line($event)" @mark="add_marker($event)" @delmark="del_mark($event)" @savemark="save_mark($event)"/>
   </div>
 </template>
 
@@ -23,6 +23,8 @@ export default {
     linesGroup2: [],
     compareId: [],
     uplinks: [],
+    providers: [],
+    providers_geo: [],
     appTitle: 'Base map',
     coord: [46.63, 32.62],
     zoom: 12
@@ -32,26 +34,72 @@ export default {
         this.zoom = event
       },
       add_line: function (event) {
-        this.linesGroup.push(event)
+        this.linesGroup2.push(event)
+      },
+      add_marker: function (event) {
+        this.providers_geo.push(event)
       },
       del_line: async function (event) {
         let item = this.compareId.find(el => el.markerId == event.markerId)
-
-        this.linesGroup = this.linesGroup.filter(el => el.markerId != event.markerId)
-        const resp = await axios.post('http://151.0.10.245:5000/del', {'id': item ? item.id : event.markerId})
+        
+        const resp = await axios.post('http://151.0.10.245:5000/delline', {'id': item ? item.id : event.markerId})
 
         if (resp.status != 200) {
           console.log('Server not saved line')
           console.log(resp)
+        } else {
+          if (item) {
+            this.linesGroup = this.linesGroup.filter(el => el.markerId != item.id)
+            this.linesGroup2 = this.linesGroup2.filter(el => el.markerId != item.id)
+            this.compareId = this.compareId.filter(el => el.id != item.id)
+          }
+
+          this.linesGroup = this.linesGroup.filter(el => el.markerId != event.markerId)
+          this.linesGroup2 = this.linesGroup2.filter(el => el.markerId != event.markerId)
+        }
+      },
+      del_mark: async function (event) {
+        let item = this.compareId.find(el => el.markerId == event.markerId)
+        
+        const resp = await axios.post('http://151.0.10.245:5000/delmark', {'id': item ? item.id : event.markerId})
+
+        if (resp.status != 200) {
+          console.log('Server not saved line')
+          console.log(resp)
+        } else {
+          if (item) {
+            this.providers_geo = this.providers_geo.filter(el => el.markerId != item.id)
+            this.compareId = this.compareId.filter(el => el.id != item.id)
+          }
+
+          this.providers_geo = this.providers_geo.filter(el => el.markerId != event.markerId)
         }
       },
       save_line: async function (event) {
         let item = this.compareId.find(el => el.markerId == event.markerId)
 
-        const resp = await axios.post('http://151.0.10.245:5000/add', {'line': {
+        const resp = await axios.post('http://151.0.10.245:5000/addline', {'line': {
                         markerId: item ? item.id : event.markerId,
                         coords: event.coords,
                         options: event.options,
+                        properties: event.properties
+                    }})
+
+        if (resp.status != 200) {
+          console.log('Server not saved line')
+          console.log(resp)
+        } else {
+          if (!item)
+            this.compareId.push({'id': resp.data.id, 'markerId': event.markerId})
+        }
+      },
+      save_mark: async function (event) {
+        let item = this.compareId.find(el => el.markerId == event.markerId)
+
+        const resp = await axios.post('http://151.0.10.245:5000/addmark', {'mark': {
+                        markerId: item ? item.id : event.markerId,
+                        coords: event.coords,
+                        provider: event.provider,
                         properties: event.properties
                     }})
 
@@ -91,6 +139,11 @@ export default {
           this.operatorGroup[event].standart3G = 1
           this.operatorGroup[event].standart4G = 1
         }
+      },
+      select_prov: function (event) {
+        this.providers[event].change = !this.providers[event].change
+
+        this.providers_geo.forEach(el => { if (el.provider == this.providers[event].id) el.show = this.providers[event].change })
       },
       select_ln: function (event) {
         if (this.linesGroup2.length == 1 && this.linesGroup2[0].markerId == event) {
@@ -154,16 +207,24 @@ export default {
         this.operatorGroup = resp.data
 
         this.operatorGroup.forEach(item => {
-           if (item.id === 1) {
-            item.change = true
-          } else {
-            item.change = false
-          }
+          //  if (item.id === 1) {
+          //   item.change = true
+          // } else {
+          //   item.change = false
+          // }
 
           item.standart2G = 1
           item.standart3G = 1
           item.standart4G = 1
           item.show = true
+        })
+      },
+      getProviders: async function () {
+        const resp = await axios.get('http://151.0.10.245:5000/providers')
+        this.providers = resp.data
+
+        this.operatorGroup.forEach(item => {
+            item.change = false
         })
       },
       getBaseStationById: async function (id) {
@@ -197,6 +258,40 @@ export default {
             if (item.bs_4g)
               item.bs_comment += '4G '
           }
+        })
+      },
+      getColorMarker: function(item) {
+        switch (item) {
+          case 1:
+            return 'islands#violetRapidTransitCircleIcon'
+          case 2:
+            return 'islands#darkOrangeHydroCircleIcon'
+          case 3:
+            return 'islands#oliveLeisureCircleIcon'
+          case 4:
+            return 'islands#brownWorshipCircleIcon'
+        }
+
+        return 'islands#grayStarCircleIcon'
+      },
+      getMarks: async function () {
+        const resp = await axios.get(`http://151.0.10.245:5000/marks`)
+        this.providers_geo = resp.data.map(el => {
+          let item = {
+              markerId: el.id,
+              coords: [el.latitude, el.longitude],
+              provider: el.provider,
+              options: {
+                  preset: this.getColorMarker(el.provider)
+              },
+              properties: {
+                  hintContent: this.providers[el.provider-1].provider_name,
+                  balloonContentHeader: el.balloon
+              },
+              show: false
+          }
+
+          return item
         })
       },
       getLines: async function () {
@@ -241,7 +336,9 @@ export default {
     mounted: async function () {
       try {
         this.getOperators()
-        this.getBaseStationById(1)
+        // this.getBaseStationById(1)
+        await this.getProviders()
+        this.getMarks()
       } catch (err) {
         console.error('error in headers mounted')
       }
@@ -253,14 +350,18 @@ export default {
 #app {
   width: 100%;
 }
-
 .cnt {
   width: 100%;
   height: 93%;
   position: absolute;
 }
-
 .ymap-container {
   height: 100%;
+}
+.dropdown-con {
+  position: absolute;
+}
+.dropdown-menu-con {
+  display: block;
 }
 </style>
