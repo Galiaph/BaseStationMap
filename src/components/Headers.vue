@@ -196,7 +196,7 @@ export default {
 }
 
 .dropdown-menu {
-  max-height: 100px;
+  max-height: 400px;
   overflow-y: scroll;
 }
 </style>

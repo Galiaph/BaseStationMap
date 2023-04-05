@@ -19,10 +19,10 @@
       :id="item.id"
       :show="item.show"
       :comment="item.bs_comment"
-      :status="item.bs_status"
+      :status="item.station ? 1 : item.bs_status"
       :geoLocation="[item.bs_latitude, item.bs_longitude]"
       :name="item.bs_name"
-      :color="item.bs_operator"
+      :color="item.station ? item.bs_operator+10 : item.bs_operator"
     />
 
     <test
@@ -71,6 +71,27 @@
       @click.prevent="edit_prov(item, $event)"
     />
     </div>
+    <transition v-if="showModal" name="modal">
+    <div class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+          <div class="modal-header2">
+            <h4>Статистика по мобильным операторам</h4>
+          </div>
+          <div class="modal-body">
+            default body
+          </div>
+          <div class="modal-footer">
+            default footer
+
+            <button class="btn btn-outline-success" @click="showModal = false">
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
   </yandex-map>
 </template>
 
@@ -114,6 +135,7 @@ export default {
     createdMarker: false,
     mySelected: false,
     myMap: null,
+    showModal: false,
     images:
       'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPiAgICAgICAgPHRpdGxlPnBvaW50PC90aXRsZT4gICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+ICAgICAgICA8ZyBpZD0ienB0LTMiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMuMDAwMDAwLCAxLjAwMDAwMCkiPiAgICAgICAgICAgIDxwYXRoIGQ9Ik01LjA1MDY1MzU3LDkuOTI2MzkwNjkgTDQuNDAxNDU4MDcsMTMuNDI0NzQxNCBDNC4wOTQ3NzIwMSwxNS4wNzczOTUxIDQuNjQ4NDI3NTQsMTUuMzEyNTQzMyA1LjYyMjA1MDkxLDEzLjkyOTMzNTUgQzUuNjIyMDUwOTEsMTMuOTI5MzM1NSA4LjUyNzczNjYsMTAuMTIwODc2NyA5LjU5MzU0MzE4LDcuMjI2MTYxMTMgQzkuNjgxNjg2OTksNi45ODY3NjM3NyA5LjgwMDkwMTk2LDYuNTc4ODU1MzkgOS44NzQ2NDA4Nyw2LjA3MjY1MjQ3IEM5Ljk1NjY3MzcxLDUuNzE1OTc3NDEgMTAsNS4zNDQ2NzEzMiAxMCw0Ljk2MzMyMDA2IEMxMCwyLjIyMjE1Mzk1IDcuNzYxNDIzODksMCA1LDAgQzIuMjM4NTc2MTEsMCAwLDIuMjIyMTUzOTUgMCw0Ljk2MzMyMDA2IEMwLDcuNzA0NDg2MTcgMi4yMzg1NzYxMSw5LjkyNjY0MDEyIDUsOS45MjY2NDAxMiBDNS4wMTY5MDQyNSw5LjkyNjY0MDEyIDUuMDMzNzg4OSw5LjkyNjU1Njg1IDUuMDUwNjUzNTcsOS45MjYzOTA2OSBaIiBpZD0iUGF0aC0xOTIiIGZpbGw9IiM2NjYiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4gICAgICAgICAgICA8ZWxsaXBzZSBpZD0iT3ZhbC02NCIgZmlsbD0iI0ZGRkZGRiIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCIgY3g9IjUiIGN5PSI0LjkyMzA3NjkyIiByeD0iMS44NzUiIHJ5PSIxLjg0NjE1Mzg1Ij48L2VsbGlwc2U+ICAgICAgICA8L2c+ICAgIDwvZz48L3N2Zz4=',
     images2:
@@ -122,7 +144,17 @@ export default {
   computed: {
     buttonLine() {
       if (this.$store.getters.getRoot == 0) 
-        return {}
+        return {
+          Statistic: {
+            options: {
+              float: 'right',
+              selectOnClick: false,
+            },
+            events: {
+              click: this.showStatistic,
+            },
+          }
+        }
       else
         return {
           Marker: {
@@ -142,9 +174,18 @@ export default {
               selectOnClick: false,
             },
             events: {
-              click: this.select,
+              click: this.lineAdd,
             },
           },
+          Statistic: {
+            options: {
+              float: 'right',
+              selectOnClick: false,
+            },
+            events: {
+              click: this.showStatistic,
+            },
+          }
         }
     },
     balloonTemplate() {
@@ -431,7 +472,10 @@ export default {
         this.edited = item
       }
     },
-    select: function () {
+    showStatistic: function () {
+      this.showModal = true
+    },
+    lineAdd: function () {
       if (!this.createdLine && !this.edited) this.createdLine = true
     },
     markerAdd: function () {
@@ -542,6 +586,52 @@ export default {
 </script>
 
 <style>
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: table;
+  transition: opacity 0.3s ease;
+}
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+.modal-container {
+  width: 600px;
+  margin: 0px auto;
+  padding: 20px 30px;
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+  transition: all 0.3s ease;
+}
+.modal-header2 h4 {
+  margin-top: 0;
+  text-align: center;
+  color: #42b983;
+}
+.modal-body {
+  margin: 20px 0;
+}
+.modal-default-button {
+  float: right;
+}
+.modal-enter {
+  opacity: 0;
+}
+.modal-leave-active {
+  opacity: 0;
+}
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
 .balloon_left {
   box-sizing: content-box;
   float: left;
