@@ -148,7 +148,7 @@ export default {
         this.providers_geo.forEach(el => { if (el.provider == this.providers[event].id) el.show = this.providers[event].change })
       },
       select_dist: async function (id) {
-        if (this.districts[id-1].change) {
+        if (this.districts.find(el => el.id == id).change) {
           this.districts_geo = []
           this.districts.forEach(el => el.change = false )
           return
