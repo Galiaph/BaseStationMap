@@ -85,6 +85,24 @@
               </li>
             </ul>
           </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Муниципальные округа
+            </a>
+            <ul class="dropdown-menu">
+              <li v-for="item in districts" :key="item.id" :data="item">
+                <a @click.prevent="select_d(item.id)" class="dropdown-item" style="padding: 3px;" href="#">
+                  <svg v-show="!item.change" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left mb-1" viewBox="0 0 16 16">
+                    <path d="M6 12.796V3.204L11.481 8 6 12.796zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z"/>
+                  </svg>
+                  <svg v-show="item.change" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill mb-1" viewBox="0 0 16 16">
+                    <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                  </svg>
+                  {{ item.district_name }}
+                </a>
+              </li>
+            </ul>
+          </li>
           <li class="nav-item dropdown" v-show="lines.length">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Линии
@@ -136,6 +154,7 @@ export default {
       operators: Object,
       providers: Object,
       lines: Object,
+      districts: Object
     },
     computed: {
     },
@@ -149,6 +168,9 @@ export default {
       },
       select_p: function (id) {
         this.$emit('selected_p', id)
+      },
+      select_d: function (id) {
+        this.$emit('selected_d', id)
       },
       select_st: function (id, st) {
         this.$emit('selected_st', {'id': id, 'st': st})

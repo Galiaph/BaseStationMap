@@ -1,7 +1,7 @@
 <template>
-  <Headers :operators="operatorGroup" :baseStations="baseStationsGroup" :lines="linesGroup" :providers="providers" @selected="select_oper($event)" @selected_p="select_prov($event)" @selected_line="selecte_line($event)" @selected_st="select_st($event)" @selected_ln="select_ln($event)" @searchBase="search_base($event)" />
+  <Headers :operators="operatorGroup" :baseStations="baseStationsGroup" :lines="linesGroup" :providers="providers" :districts="districts" @selected="select_oper($event)" @selected_p="select_prov($event)" @selected_d="select_dist($event)" @selected_line="selecte_line($event)" @selected_st="select_st($event)" @selected_ln="select_ln($event)" @searchBase="search_base($event)" />
   <div id="map" class="cnt">
-    <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :lines="linesGroup2" :uplinks="uplinks" :coords="coord" :zooms="zoom" :providers="providers" :providers_geo="providers_geo" @add="add_line($event)" @del="del_line($event)" @save="save_line($event)" @mark="add_marker($event)" @delmark="del_mark($event)" @savemark="save_mark($event)"/>
+    <Map :baseStations="baseStationsGroup" :operators="operatorGroup" :lines="linesGroup2" :uplinks="uplinks" :coords="coord" :zooms="zoom" :providers="providers" :providers_geo="providers_geo" :districts_geo="districts_geo" @add="add_line($event)" @del="del_line($event)" @save="save_line($event)" @mark="add_marker($event)" @delmark="del_mark($event)" @savemark="save_mark($event)"/>
   </div>
 </template>
 
@@ -23,8 +23,10 @@ export default {
     linesGroup2: [],
     compareId: [],
     uplinks: [],
+    districts: [],
     providers: [],
     providers_geo: [],
+    districts_geo: [],
     appTitle: 'Base map',
     coord: [46.63, 32.62],
     zoom: 12
@@ -145,6 +147,33 @@ export default {
 
         this.providers_geo.forEach(el => { if (el.provider == this.providers[event].id) el.show = this.providers[event].change })
       },
+      select_dist: async function (id) {
+        if (this.districts[id-1].change) {
+          this.districts_geo = []
+          this.districts.forEach(el => el.change = false )
+          return
+        }
+        const resp = await axios.get(`http://151.0.10.245:5000/ds/${id}`)
+        this.districts.forEach(el => { el.change = el.id == id ? true : false })
+        this.districts_geo = resp.data[0].geoCoords.map((el, index) => {
+          let item = {
+              markerId: index,
+              coords: el[0].map(x => {
+                return [x[1], x[0]]
+              }),
+              properties: {
+                  description: 'Бериславский район',
+                  fill:'#ff931e',
+                  fillOpacity: 0.3,
+                  stroke: '#e6761b',
+                  strokeWidth: 2,
+                  strokeOpacity: 0.9
+              }
+          }
+
+          return item
+        })
+      },
       select_ln: function (event) {
         if (this.linesGroup2.length == 1 && this.linesGroup2[0].markerId == event) {
           this.linesGroup.forEach(el => el.selected = false )
@@ -224,6 +253,14 @@ export default {
         this.providers = resp.data
 
         this.operatorGroup.forEach(item => {
+            item.change = false
+        })
+      },
+      getDistricts: async function () {
+        const resp = await axios.get('http://151.0.10.245:5000/districts')
+        this.districts = resp.data
+
+        this.districts.forEach(item => {
             item.change = false
         })
       },
@@ -339,6 +376,7 @@ export default {
         // this.getBaseStationById(1)
         await this.getProviders()
         this.getMarks()
+        this.getDistricts()
       } catch (err) {
         console.error('error in headers mounted')
       }

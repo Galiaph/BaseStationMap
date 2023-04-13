@@ -13,6 +13,20 @@
     ]"
     :detailedControls="buttonLine"
   >
+    <test
+      v-for="item in districts_geo"
+      :marker-id="item.markerId"
+      :key="item"
+      :coords="[item.coords]"
+      :marker-fill="{enable: true,
+                    color: item.properties.fill,
+                    opacity: item.properties.fillOpacity}"
+      :marker-stroke="{color: item.properties.stroke,
+                      opacity: item.properties.strokeOpacity,
+                      width: item.properties.strokeWidth}"
+      marker-type="polygon"
+    />
+
     <baseStationsArr
       v-for="item in baseStations"
       :key="item"
@@ -71,27 +85,6 @@
       @click.prevent="edit_prov(item, $event)"
     />
     </div>
-    <transition v-if="showModal" name="modal">
-    <div class="modal-mask">
-      <div class="modal-wrapper">
-        <div class="modal-container">
-          <div class="modal-header2">
-            <h4>Статистика по мобильным операторам</h4>
-          </div>
-          <div class="modal-body">
-            default body
-          </div>
-          <div class="modal-footer">
-            default footer
-
-            <button class="btn btn-outline-success" @click="showModal = false">
-              OK
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </transition>
   </yandex-map>
 </template>
 
@@ -105,6 +98,29 @@
 //       <li><a class="dropdown-item" href="#">Добавить метку</a></li>
 //     </ul>
 //   </div>
+
+// если вдруг понадобится кнопка статистики (в теле тоже есть код)
+// <transition v-if="showModal" name="modal">
+//     <div class="modal-mask">
+//       <div class="modal-wrapper">
+//         <div class="modal-container">
+//           <div class="modal-header2">
+//             <h4>Статистика по мобильным операторам</h4>
+//           </div>
+//           <div class="modal-body">
+//             default body
+//           </div>
+//           <div class="modal-footer">
+//             default footer
+
+//             <button class="btn btn-outline-success" @click="showModal = false">
+//               OK
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   </transition>
 //<!-- ,balloonContentHeader: 'Балун метки', balloonContentBody: 'Содержимое <em>балуна</em> метки', balloonContentFooter: 'Подвал', hintContent: 'Хинт метки' } -->
 //<!-- <ymap-marker :markerId="3423424" marker-type="Polyline" :coords="[[46.641137, 32.614208], [46.63813, 32.625910]]" :options="{ strokeColor: '#00000088', strokeWidth: 4, editorMaxPoints: 6 }"/> -->
 import baseStationsArr from './elements/BaseStation.vue'
@@ -124,6 +140,7 @@ export default {
     uplinks: Object,
     providers: Object,
     providers_geo: Object,
+    districts_geo: Object,
     coords: Array,
     zooms: Number,
   },
@@ -135,7 +152,7 @@ export default {
     createdMarker: false,
     mySelected: false,
     myMap: null,
-    showModal: false,
+    // showModal: false,
     images:
       'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPiAgICAgICAgPHRpdGxlPnBvaW50PC90aXRsZT4gICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+ICAgICAgICA8ZyBpZD0ienB0LTMiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMuMDAwMDAwLCAxLjAwMDAwMCkiPiAgICAgICAgICAgIDxwYXRoIGQ9Ik01LjA1MDY1MzU3LDkuOTI2MzkwNjkgTDQuNDAxNDU4MDcsMTMuNDI0NzQxNCBDNC4wOTQ3NzIwMSwxNS4wNzczOTUxIDQuNjQ4NDI3NTQsMTUuMzEyNTQzMyA1LjYyMjA1MDkxLDEzLjkyOTMzNTUgQzUuNjIyMDUwOTEsMTMuOTI5MzM1NSA4LjUyNzczNjYsMTAuMTIwODc2NyA5LjU5MzU0MzE4LDcuMjI2MTYxMTMgQzkuNjgxNjg2OTksNi45ODY3NjM3NyA5LjgwMDkwMTk2LDYuNTc4ODU1MzkgOS44NzQ2NDA4Nyw2LjA3MjY1MjQ3IEM5Ljk1NjY3MzcxLDUuNzE1OTc3NDEgMTAsNS4zNDQ2NzEzMiAxMCw0Ljk2MzMyMDA2IEMxMCwyLjIyMjE1Mzk1IDcuNzYxNDIzODksMCA1LDAgQzIuMjM4NTc2MTEsMCAwLDIuMjIyMTUzOTUgMCw0Ljk2MzMyMDA2IEMwLDcuNzA0NDg2MTcgMi4yMzg1NzYxMSw5LjkyNjY0MDEyIDUsOS45MjY2NDAxMiBDNS4wMTY5MDQyNSw5LjkyNjY0MDEyIDUuMDMzNzg4OSw5LjkyNjU1Njg1IDUuMDUwNjUzNTcsOS45MjYzOTA2OSBaIiBpZD0iUGF0aC0xOTIiIGZpbGw9IiM2NjYiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4gICAgICAgICAgICA8ZWxsaXBzZSBpZD0iT3ZhbC02NCIgZmlsbD0iI0ZGRkZGRiIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCIgY3g9IjUiIGN5PSI0LjkyMzA3NjkyIiByeD0iMS44NzUiIHJ5PSIxLjg0NjE1Mzg1Ij48L2VsbGlwc2U+ICAgICAgICA8L2c+ICAgIDwvZz48L3N2Zz4=',
     images2:
@@ -145,15 +162,15 @@ export default {
     buttonLine() {
       if (this.$store.getters.getRoot == 0) 
         return {
-          Statistic: {
-            options: {
-              float: 'right',
-              selectOnClick: false,
-            },
-            events: {
-              click: this.showStatistic,
-            },
-          }
+          // Statistic: {
+          //   options: {
+          //     float: 'right',
+          //     selectOnClick: false,
+          //   },
+          //   events: {
+          //     click: this.showStatistic,
+          //   },
+          // }
         }
       else
         return {
@@ -177,15 +194,15 @@ export default {
               click: this.lineAdd,
             },
           },
-          Statistic: {
-            options: {
-              float: 'right',
-              selectOnClick: false,
-            },
-            events: {
-              click: this.showStatistic,
-            },
-          }
+          // Statistic: {
+          //   options: {
+          //     float: 'right',
+          //     selectOnClick: false,
+          //   },
+          //   events: {
+          //     click: this.showStatistic,
+          //   },
+          // }
         }
     },
     balloonTemplate() {
@@ -472,9 +489,9 @@ export default {
         this.edited = item
       }
     },
-    showStatistic: function () {
-      this.showModal = true
-    },
+    // showStatistic: function () {
+    //   this.showModal = true
+    // },
     lineAdd: function () {
       if (!this.createdLine && !this.edited) this.createdLine = true
     },
