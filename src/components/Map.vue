@@ -529,6 +529,12 @@ export default {
           return 'islands#oliveLeisureCircleIcon'
         case 4:
           return 'islands#brownWorshipCircleIcon'
+        case 5:
+          return 'islands#blackGovernmentCircleIcon'
+        case 6:
+          return 'islands#lightBlueHomeCircleIcon'
+        case 7:
+          return 'islands#blueGardenCircleIcon'
       }
 
       return 'islands#grayStarCircleIcon'
