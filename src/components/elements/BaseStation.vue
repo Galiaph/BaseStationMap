@@ -22,8 +22,11 @@ export default {
   },
   methods: {
     getColor: function (id, st) {
-      if (st == '0')
+      if (st == '0' && id < 3)
           return 'red'
+      else if (st == '0' && id >= 4)
+        id += 10
+
       switch (id) {
         case 1:
           return 'blue'
@@ -35,6 +38,8 @@ export default {
           return 'green'
         case 5:
           return 'olive'
+        case 6:
+          return 'violet'
         default:
           return 'grey'
       }
