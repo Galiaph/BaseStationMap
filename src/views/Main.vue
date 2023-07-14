@@ -297,7 +297,9 @@ export default {
           }
         })
       },
-      getColorMarker: function(item) {
+      getColorMarker: function(item, status) {
+        if (!status)
+          return 'islands#redMedicalCircleIcon'
         switch (item) {
           case 1:
             return 'islands#violetRapidTransitCircleIcon'
@@ -307,6 +309,12 @@ export default {
             return 'islands#oliveLeisureCircleIcon'
           case 4:
             return 'islands#brownWorshipCircleIcon'
+          case 5:
+            return 'islands#nightZooCircleIcon'
+          case 6:
+            return 'islands#pinkRunCircleIcon'
+          case 7:
+            return 'islands#yellowCircusCircleIcon'
         }
 
         return 'islands#grayStarCircleIcon'
@@ -319,7 +327,7 @@ export default {
               coords: [el.latitude, el.longitude],
               provider: el.provider,
               options: {
-                  preset: this.getColorMarker(el.provider)
+                  preset: this.getColorMarker(el.provider, el.status)
               },
               properties: {
                   hintContent: this.providers[el.provider-1].provider_name,
