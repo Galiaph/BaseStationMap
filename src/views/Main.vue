@@ -315,6 +315,12 @@ export default {
             return 'islands#pinkRunCircleIcon'
           case 7:
             return 'islands#yellowCircusCircleIcon'
+          case 8:
+            return 'islands#redParkingCircleIcon'
+          case 9:
+            return 'islands#blueAttentionCircleIcon'
+          case 10:
+            return 'islands#yellowCircusCircleIcon'
         }
 
         return 'islands#grayStarCircleIcon'
