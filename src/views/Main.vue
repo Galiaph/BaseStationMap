@@ -320,7 +320,11 @@ export default {
           case 9:
             return 'islands#blueAttentionCircleIcon'
           case 10:
-            return 'islands#yellowCircusCircleIcon'
+            return 'islands#darkGreenMountainCircleIcon'
+          case 11:
+            return 'islands#blackHomeCircleIcon'
+          case 12:
+            return 'islands#greenWaterwayCircleIcon'
         }
 
         return 'islands#grayStarCircleIcon'
