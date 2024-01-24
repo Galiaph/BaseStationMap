@@ -131,15 +131,19 @@ export default {
         }
       },
       select_oper: function (event) {
-        this.operatorGroup[event].change = !this.operatorGroup[event].change
+        const el = this.operatorGroup.find(ev => ev.id == event)
 
-        if (this.operatorGroup[event].change) {
-          this.getBaseStationById(this.operatorGroup[event].id)
-        } else {
-          this.delBaseStationById(this.operatorGroup[event].id)
-          this.operatorGroup[event].standart2G = 1
-          this.operatorGroup[event].standart3G = 1
-          this.operatorGroup[event].standart4G = 1
+        if (el) {
+          el.change = !el.change
+
+          if (el.change) {
+            this.getBaseStationById(el.id)
+          } else {
+            this.delBaseStationById(el.id)
+            el.standart2G = 1
+            el.standart3G = 1
+            el.standart4G = 1
+          }
         }
       },
       select_prov: function (event) {
@@ -189,46 +193,50 @@ export default {
         }
       },
       select_st: async function (event) {
-        switch (event.st) {
-          case '2g':
-            this.operatorGroup[event.id-1].standart2G = this.operatorGroup[event.id-1].standart2G ? 0 : 1
-            this.baseStationsGroup.forEach(item => {
-              if (item.bs_operator == this.operatorGroup[event.id-1].id) {
-                if ((item.bs_4g === 1 && this.operatorGroup[event.id-1].standart4G === 1) ||
-                    (item.bs_2g === 1 && this.operatorGroup[event.id-1].standart2G === 1) ||
-                    (item.bs_3g === 1 && this.operatorGroup[event.id-1].standart3G === 1)) {
-                  item.show = true
-                } else
-                  item.show = false
-              }
-            })
-            break
-          case '3g':
-            this.operatorGroup[event.id-1].standart3G = this.operatorGroup[event.id-1].standart3G ? 0 : 1
-            this.baseStationsGroup.forEach(item => {
-              if (item.bs_operator == this.operatorGroup[event.id-1].id) {
-                if ((item.bs_4g === 1 && this.operatorGroup[event.id-1].standart4G === 1) ||
-                    (item.bs_2g === 1 && this.operatorGroup[event.id-1].standart2G === 1) ||
-                    (item.bs_3g === 1 && this.operatorGroup[event.id-1].standart3G === 1)) {
-                  item.show = true
-                } else
-                  item.show = false
-              }
-            })
-            break
-          case '4g':
-            this.operatorGroup[event.id-1].standart4G = this.operatorGroup[event.id-1].standart4G ? 0 : 1
-            this.baseStationsGroup.forEach(item => {
-              if (item.bs_operator == this.operatorGroup[event.id-1].id) {
-                if ((item.bs_3g === 1 && this.operatorGroup[event.id-1].standart3G === 1) ||
-                    (item.bs_2g === 1 && this.operatorGroup[event.id-1].standart2G === 1) ||
-                    (item.bs_4g === 1 && this.operatorGroup[event.id-1].standart4G === 1)) {
-                  item.show = true
-                } else
-                  item.show = false
-              }
-            })
-            break
+        const el = this.operatorGroup.find(ev => ev.id == event.id)
+        console.log('select oper: ' + el)
+        if (el) {
+          switch (event.st) {
+            case '2g':
+              el.standart2G = el.standart2G ? 0 : 1
+              this.baseStationsGroup.forEach(item => {
+                if (item.bs_operator == el.id) {
+                  if ((item.bs_4g === 1 && el.standart4G === 1) ||
+                      (item.bs_2g === 1 && el.standart2G === 1) ||
+                      (item.bs_3g === 1 && el.standart3G === 1)) {
+                    item.show = true
+                  } else
+                    item.show = false
+                }
+              })
+              break
+            case '3g':
+              el.standart3G = el.standart3G ? 0 : 1
+              this.baseStationsGroup.forEach(item => {
+                if (item.bs_operator == el.id) {
+                  if ((item.bs_4g === 1 && el.standart4G === 1) ||
+                      (item.bs_2g === 1 && el.standart2G === 1) ||
+                      (item.bs_3g === 1 && el.standart3G === 1)) {
+                    item.show = true
+                  } else
+                    item.show = false
+                }
+              })
+              break
+            case '4g':
+              el.standart4G = el.standart4G ? 0 : 1
+              this.baseStationsGroup.forEach(item => {
+                if (item.bs_operator == el.id) {
+                  if ((item.bs_3g === 1 && el.standart3G === 1) ||
+                      (item.bs_2g === 1 && el.standart2G === 1) ||
+                      (item.bs_4g === 1 && el.standart4G === 1)) {
+                    item.show = true
+                  } else
+                    item.show = false
+                }
+              })
+              break
+          }
         }
       },
       getOperators: async function () {

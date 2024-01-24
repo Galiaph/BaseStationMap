@@ -36,10 +36,10 @@ export default {
           return 'yellow'
         case 4:
           return 'green'
-        case 5:
-          return 'olive'
-        case 6:
+        case 7:
           return 'violet'
+        case 8:
+          return 'olive'
         default:
           return 'grey'
       }
