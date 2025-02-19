@@ -310,29 +310,35 @@ export default {
           return 'islands#redMedicalCircleIcon'
         switch (item) {
           case 1:
-            return 'islands#violetRapidTransitCircleIcon'
+            return 'islands#blueRapidTransitCircleIcon'
           case 2:
-            return 'islands#darkOrangeHydroCircleIcon'
+            return 'islands#darkGreenHydroCircleIcon'
           case 3:
-            return 'islands#oliveLeisureCircleIcon'
+            return 'islands#violetLeisureCircleIcon'
           case 4:
-            return 'islands#brownWorshipCircleIcon'
+            return 'islands#darkOrangeWorshipCircleIcon'
           case 5:
-            return 'islands#nightZooCircleIcon'
+            return 'islands#blackZooCircleIcon'
           case 6:
-            return 'islands#pinkRunCircleIcon'
+            return 'islands#nightRunCircleIcon'
           case 7:
             return 'islands#yellowCircusCircleIcon'
           case 8:
-            return 'islands#redParkingCircleIcon'
+            return 'islands#darkBlueParkingCircleIcon'
           case 9:
-            return 'islands#blueAttentionCircleIcon'
+            return 'islands#greenAttentionCircleIcon'
           case 10:
-            return 'islands#darkGreenMountainCircleIcon'
+            return 'islands#pinkMountainCircleIcon'
           case 11:
-            return 'islands#blackHomeCircleIcon'
+            return 'islands#orangeHomeCircleIcon'
           case 12:
-            return 'islands#greenWaterwayCircleIcon'
+            return 'islands#lightBlueWaterwayCircleIcon'
+          case 13:
+            return 'islands#brownMoneyCircleIcon'
+          case 14:
+            return 'islands#oliveTheaterCircleIcon'
+          case 15:
+            return 'islands#grayWasteCircleIcon'
         }
 
         return 'islands#grayStarCircleIcon'
@@ -348,7 +354,7 @@ export default {
                   preset: this.getColorMarker(el.provider, el.status)
               },
               properties: {
-                  hintContent: this.providers[el.provider-1].provider_name,
+                  hintContent: this.providers[el.provider-1].provider_name + ' - ' + el.city,
                   balloonContentHeader: el.balloon
               },
               show: false
